@@ -9,13 +9,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 function App() {
-  const [message, setMessage] = useState('');
-
   useEffect(() => {
-    // Make a GET request to the backend API
     axios.get('http://localhost:500/api/example')
       .then(response => {
-        setMessage(response.data.message);
+        // Handle the response if needed
       })
       .catch(error => {
         console.error('There was an error making the request:', error);
@@ -32,5 +29,6 @@ function App() {
     </Router>
   );
 }
+
 
 export default App;

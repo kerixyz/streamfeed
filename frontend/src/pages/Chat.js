@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Chat.css'; // Keep this for custom styling or remove if using only Bootstrap
+// import './Chat.css'; // Keep this for custom styling or remove if using only Bootstrap
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);

@@ -2,11 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
 require('dotenv').config();
+const bodyParser = require('body-parser');
 const pool = require('./db'); // Import database connection
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

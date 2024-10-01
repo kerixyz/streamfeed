@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
-const OpenAI = require('openai'); // Use the latest import method
+const OpenAI = require('openai');
 require('dotenv').config();
+const pool = require('./db'); // Import database connection
 
 const app = express();
 app.use(cors());
@@ -11,8 +12,22 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Initialize conversation state storage (in-memory object, can be replaced with a database)
+const dataRoutes = require('./routes/data');
+app.use('/api', dataRoutes);
+
 const conversationState = {};
+
+// Function to save messages to the database
+async function saveMessage(userId, message, role) {
+  try {
+    await pool.query(
+      'INSERT INTO chat_messages (user_id, message, role) VALUES ($1, $2, $3)',
+      [userId, message, role]
+    );
+  } catch (err) {
+    console.error('Error saving message to database:', err);
+  }
+}
 
 // Helper function to get chatbot response
 async function getChatbotResponse(messages) {
@@ -31,8 +46,6 @@ async function getChatbotResponse(messages) {
   }
 }
 
-// Function to get feedback question dynamically based on the streamer name
-// narrowing this down a bit more
 function getFeedbackQuestion(category, streamerName) {
   const feedbackCategories = {
     communityManagement: `How do you feel about the community management on ${streamerName}'s stream? Are the chat rules fair, and is moderation effective?`,
@@ -42,16 +55,12 @@ function getFeedbackQuestion(category, streamerName) {
   return feedbackCategories[category];
 }
 
-// Categories for feedback
 const categoriesOrder = ['communityManagement', 'contentProduction', 'marketingStrategies'];
 
-// API endpoint for chat interaction
 app.post('/api/chat', async (req, res) => {
   const { userId, message } = req.body;
 
-  // Check if user exists in conversation state
   if (!conversationState[userId]) {
-    // Initialize new conversation state for user
     conversationState[userId] = {
       messages: [
         { role: 'system', content: 'You are Evalubot, an assistant that helps users provide constructive feedback about streamers. Feedback should be specific, actionable, and justifiable.' }
@@ -60,52 +69,58 @@ app.post('/api/chat', async (req, res) => {
       streamerName: null,
     };
 
-    // Initial bot message asking for the streamer's name
     const initialBotMessage = 'Hello! I’m Evalubot. I’d like to help you provide feedback about a streamer. Which streamer would you like to give feedback on today?';
     conversationState[userId].messages.push({ role: 'assistant', content: initialBotMessage });
+
+    // Save the initial bot message to the database
+    await saveMessage(userId, initialBotMessage, 'assistant');
 
     return res.json({ reply: initialBotMessage });
   }
 
   const userState = conversationState[userId];
 
-  // Special command to end the conversation
   if (message.toLowerCase() === 'end') {
     delete conversationState[userId];
     return res.json({ reply: 'Thank you for using Evalubot! If you need more assistance, feel free to start a new conversation.' });
   }
 
-  // If the streamer name is not yet set, assume the next message contains the streamer's name
   if (!userState.streamerName) {
-    userState.streamerName = message; // Capture the streamer's name from the user's message
+    userState.streamerName = message;
 
-    // Ask the first feedback question
     const firstQuestion = getFeedbackQuestion(categoriesOrder[userState.currentCategoryIndex], userState.streamerName);
     userState.messages.push({ role: 'assistant', content: firstQuestion });
     userState.currentCategoryIndex++;
 
+    // Save the user's message and the bot's first question to the database
+    await saveMessage(userId, message, 'user');
+    await saveMessage(userId, firstQuestion, 'assistant');
+
     return res.json({ reply: firstQuestion });
   }
 
-  // Add user's message to conversation
   userState.messages.push({ role: 'user', content: message });
+  await saveMessage(userId, message, 'user'); // Save user's message
 
-  // If more categories are left, ask the next question
   if (userState.currentCategoryIndex < categoriesOrder.length) {
     const nextQuestion = getFeedbackQuestion(categoriesOrder[userState.currentCategoryIndex], userState.streamerName);
     userState.messages.push({ role: 'assistant', content: nextQuestion });
     userState.currentCategoryIndex++;
 
+    // Save the bot's next question to the database
+    await saveMessage(userId, nextQuestion, 'assistant');
+
     return res.json({ reply: nextQuestion });
   } else {
-    // If all categories have been covered, handle additional feedback or end conversation
     const finalResponse = "Thank you for all your feedback! If you have more comments, type 'end' to finish or continue with additional feedback.";
     userState.messages.push({ role: 'assistant', content: finalResponse });
+
+    // Save the final bot message to the database
+    await saveMessage(userId, finalResponse, 'assistant');
 
     return res.json({ reply: finalResponse });
   }
 });
 
-// Start the server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

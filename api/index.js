@@ -3,7 +3,15 @@ const cors = require('cors');
 const OpenAI = require('openai');
 require('dotenv').config();
 const bodyParser = require('body-parser');
-const pool = require('./db'); // Import database connection
+// const pool = require('./db'); // Import database connection
+
+const { Pool } = require('pg');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 const app = express();
 app.use(cors());
@@ -19,6 +27,10 @@ app.use('/api', dataRoutes);
 
 const conversationState = {};
 
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
 // Function to save messages to the database
 async function saveMessage(userId, message, role) {
   try {
@@ -30,6 +42,7 @@ async function saveMessage(userId, message, role) {
     console.error('Error saving message to database:', err);
   }
 }
+
 
 // Helper function to get chatbot response
 async function getChatbotResponse(messages) {
@@ -123,6 +136,3 @@ app.post('/api/chat', async (req, res) => {
     return res.json({ reply: finalResponse });
   }
 });
-
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

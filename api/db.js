@@ -1,16 +1,13 @@
 // api/db.js
-// this page sets up teh connection to the postgresql database 
-// 100124, currently configured to localhost
-
 require('dotenv').config();
 const { Pool } = require('pg');
 
+// Create a new PostgreSQL connection pool
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 module.exports = pool;

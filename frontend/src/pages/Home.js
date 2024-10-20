@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 
 // Environment toggle (local vs. Heroku)
-const BASE_URL = process.env.REACT_APP_ENV === 'heroku' 
-  ? 'https://secure-dusk-86046-23b5df488cf4.herokuapp.com/api' 
-  : 'http://localhost:5001/api';
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
+
 
 const Home = () => {
   const [streamerName, setStreamerName] = useState('');
   const [sessionLink, setSessionLink] = useState('');
   const [error, setError] = useState('');
+
+  console.log('API Base URL:', process.env.REACT_APP_API_BASE_URL);
 
   // Function to handle session creation
   const createSession = async () => {
@@ -41,7 +42,7 @@ const Home = () => {
           StreamFeed
         </h1>
       </header>
-
+      
       {/* Main Section */}
       <section className="w-full max-w-4xl bg-softGray rounded-lg p-8 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

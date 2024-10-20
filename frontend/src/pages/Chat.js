@@ -3,9 +3,7 @@ import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 
 // Environment toggle (local vs. Heroku)
-const BASE_URL = process.env.REACT_APP_ENV === 'heroku' 
-  ? 'https://https://secure-dusk-86046-23b5df488cf4.herokuapp.com/api' 
-  : 'http://localhost:5001/api';
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
 
 const Chat = () => {
   const { streamer } = useParams();

@@ -1,12 +1,11 @@
 const { Pool } = require('pg');
-require('dotenv').config();
 
-const isProduction = process.env.NODE_ENV === 'production';
-
-// Configure the pool
+// Use environment variable for the database connection string
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: isProduction ? { rejectUnauthorized: false } : false, // Disable SSL for local development
+  ssl: {
+    rejectUnauthorized: false,  // Required for Heroku SSL connections
+  },
 });
 
 module.exports = pool;

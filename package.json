@@ -3,14 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  
-  
-"scripts": {
+  "scripts": {
   "start": "cd api && node index.js",
-      "heroku-postbuild": "cd api && npm install && cd ../frontend && npm install && npm run build && cp -a build/. ../api/public/"
-},
-
-  
+    "heroku-postbuild": "cd api && npm install && cd ../frontend && npm install && npm run build && cp -a build/. ../api/public/"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"

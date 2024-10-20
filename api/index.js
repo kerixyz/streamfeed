@@ -1,21 +1,22 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
-require('dotenv').config();
 const path = require('path');
 const bodyParser = require('body-parser');
-const pool = require('./db'); // Import database connection
-
+const pool = require('./db'); //
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-app.use(express.static(path.join(__dirname, 'public')));
-
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 const dataRoutes = require('./routes/data');
 app.use('/api', dataRoutes);

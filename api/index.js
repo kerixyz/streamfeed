@@ -31,6 +31,27 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 const dataRoutes = require('./routes/data');
 app.use('/api', dataRoutes);
 
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; img-src 'self' https://secure-dusk-86046-23b5df488cf4.herokuapp.com; script-src 'self'; style-src 'self';"
+  );
+  next();
+});
+
+//handling the root route path
+app.get('/', (req, res) => {
+  res.send('Welcome to the API!');  // Simple response for root URL
+});
+
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Serve index.html for any unknown routes
+app.get('*', (req, res) => {
+res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
 const conversationState = {};
 
 // Chatbot route
@@ -98,7 +119,6 @@ app.post('/api/chat', async (req, res) => {
     return res.json({ reply: finalResponse });
   }
 });
-
 
 // Function to save messages to the database
 async function saveMessage(userId, message, role) {

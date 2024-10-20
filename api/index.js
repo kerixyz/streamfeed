@@ -8,152 +8,96 @@ const bodyParser = require('body-parser');
 const pool = require('./db'); 
 const app = express();
 
-// Use environment variables for API and frontend URLs
-const apiUrl = process.env.API_URL;
-const frontendUrl = process.env.FRONTEND_URL;
+// Set up API and frontend URLs based on environment
+const apiUrl = process.env.API_URL || 'http://localhost:5001/api';
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 // CORS setup to allow frontend URL
 app.use(cors({
-  origin: [frontendUrl, 'https://secure-dusk-86046-23b5df488cf4.herokuapp.com/'],
-  credentials: true,
+  origin: frontendUrl,
 }));
 
 app.use(express.json());
 app.use(bodyParser.json());
 
-// OpenAI setup
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Load API routes
 const dataRoutes = require('./routes/data');
 app.use('/api', dataRoutes);
 
-// Serve static files in production (only if you're serving a frontend from the backend)
-app.use(express.static(path.join(__dirname, 'client/build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
-
-// Handle 404 errors
-app.use((req, res, next) => {
-  res.status(404).json({ error: 'Not Found' });
-});
-
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Internal Server Error' });
-});
-
-// Start server
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// Example of how to use OpenAI with your conversation state
 const conversationState = {};
 
-// require('dotenv').config();
+// Chatbot route
+app.post('/api/chat', async (req, res) => {
+  const { userId, message } = req.body;
 
-// const express = require('express');
-// const cors = require('cors');
-// const OpenAI = require('openai');
-// const path = require('path');
-// const bodyParser = require('body-parser');
-// const pool = require('./db'); 
-// const app = express();
+  if (!conversationState[userId]) {
+    conversationState[userId] = {
+      messages: [
+        { role: 'system', content: 'You are Evalubot, an assistant that helps users provide constructive feedback about streamers. Feedback should be specific, actionable, and justifiable.' }
+      ],
+      currentCategoryIndex: 0,
+      streamerName: null,
+    };
 
-// // Set up API and frontend URLs based on environment
-// const apiUrl = process.env.API_URL || 'http://localhost:5001/api';
-// const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const initialBotMessage = 'Hello! I’m Evalubot. I’d like to help you provide feedback about a streamer. Which streamer would you like to give feedback on today?';
+    conversationState[userId].messages.push({ role: 'assistant', content: initialBotMessage });
 
-// // CORS setup to allow frontend URL
-// app.use(cors({
-//   origin: frontendUrl,
-// }));
+    // Save the initial bot message to the database
+    await saveMessage(userId, initialBotMessage, 'assistant');
 
-// app.use(express.json());
-// app.use(bodyParser.json());
+    return res.json({ reply: initialBotMessage });
+  }
 
-// const openai = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
+  const userState = conversationState[userId];
 
-// const PORT = process.env.PORT || 5001;
-// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  if (message.toLowerCase() === 'end') {
+    delete conversationState[userId];
+    return res.json({ reply: 'Thank you for using Evalubot! If you need more assistance, feel free to start a new conversation.' });
+  }
 
-// // Load API routes
-// const dataRoutes = require('./routes/data');
-// app.use('/api', dataRoutes);
+  if (!userState.streamerName) {
+    userState.streamerName = message;
 
-// const conversationState = {};
+    const firstQuestion = getFeedbackQuestion(categoriesOrder[userState.currentCategoryIndex], userState.streamerName);
+    userState.messages.push({ role: 'assistant', content: firstQuestion });
+    userState.currentCategoryIndex++;
 
-// // Chatbot route
-// app.post('/api/chat', async (req, res) => {
-//   const { userId, message } = req.body;
+    // Save the user's message and the bot's first question to the database
+    await saveMessage(userId, message, 'user');
+    await saveMessage(userId, firstQuestion, 'assistant');
 
-//   if (!conversationState[userId]) {
-//     conversationState[userId] = {
-//       messages: [
-//         { role: 'system', content: 'You are Evalubot, an assistant that helps users provide constructive feedback about streamers. Feedback should be specific, actionable, and justifiable.' }
-//       ],
-//       currentCategoryIndex: 0,
-//       streamerName: null,
-//     };
+    return res.json({ reply: firstQuestion });
+  }
 
-//     const initialBotMessage = 'Hello! I’m Evalubot. I’d like to help you provide feedback about a streamer. Which streamer would you like to give feedback on today?';
-//     conversationState[userId].messages.push({ role: 'assistant', content: initialBotMessage });
+  userState.messages.push({ role: 'user', content: message });
+  await saveMessage(userId, message, 'user'); 
 
-//     // Save the initial bot message to the database
-//     await saveMessage(userId, initialBotMessage, 'assistant');
+  if (userState.currentCategoryIndex < categoriesOrder.length) {
+    const nextQuestion = getFeedbackQuestion(categoriesOrder[userState.currentCategoryIndex], userState.streamerName);
+    userState.messages.push({ role: 'assistant', content: nextQuestion });
+    userState.currentCategoryIndex++;
 
-//     return res.json({ reply: initialBotMessage });
-//   }
+    // Save the bot's next question to the database
+    await saveMessage(userId, nextQuestion, 'assistant');
 
-//   const userState = conversationState[userId];
+    return res.json({ reply: nextQuestion });
+  } else {
+    const finalResponse = "Thank you for all your feedback! If you have more comments, type 'end' to finish or continue with additional feedback.";
+    userState.messages.push({ role: 'assistant', content: finalResponse });
 
-//   if (message.toLowerCase() === 'end') {
-//     delete conversationState[userId];
-//     return res.json({ reply: 'Thank you for using Evalubot! If you need more assistance, feel free to start a new conversation.' });
-//   }
+    // Save the final bot message to the database
+    await saveMessage(userId, finalResponse, 'assistant');
 
-//   if (!userState.streamerName) {
-//     userState.streamerName = message;
-
-//     const firstQuestion = getFeedbackQuestion(categoriesOrder[userState.currentCategoryIndex], userState.streamerName);
-//     userState.messages.push({ role: 'assistant', content: firstQuestion });
-//     userState.currentCategoryIndex++;
-
-//     // Save the user's message and the bot's first question to the database
-//     await saveMessage(userId, message, 'user');
-//     await saveMessage(userId, firstQuestion, 'assistant');
-
-//     return res.json({ reply: firstQuestion });
-//   }
-
-//   userState.messages.push({ role: 'user', content: message });
-//   await saveMessage(userId, message, 'user'); 
-
-//   if (userState.currentCategoryIndex < categoriesOrder.length) {
-//     const nextQuestion = getFeedbackQuestion(categoriesOrder[userState.currentCategoryIndex], userState.streamerName);
-//     userState.messages.push({ role: 'assistant', content: nextQuestion });
-//     userState.currentCategoryIndex++;
-
-//     // Save the bot's next question to the database
-//     await saveMessage(userId, nextQuestion, 'assistant');
-
-//     return res.json({ reply: nextQuestion });
-//   } else {
-//     const finalResponse = "Thank you for all your feedback! If you have more comments, type 'end' to finish or continue with additional feedback.";
-//     userState.messages.push({ role: 'assistant', content: finalResponse });
-
-//     // Save the final bot message to the database
-//     await saveMessage(userId, finalResponse, 'assistant');
-
-//     return res.json({ reply: finalResponse });
-//   }
-// });
+    return res.json({ reply: finalResponse });
+  }
+});
 
 
 // Function to save messages to the database

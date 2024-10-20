@@ -5,10 +5,19 @@ const cors = require('cors');
 const OpenAI = require('openai');
 const path = require('path');
 const bodyParser = require('body-parser');
-const pool = require('./db'); //
+const pool = require('./db'); 
+
 const app = express();
 
-app.use(cors());
+// Set up API and frontend URLs based on environment
+const apiUrl = process.env.API_URL || 'http://localhost:5001/api';
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+// CORS setup to allow frontend URL
+app.use(cors({
+  origin: frontendUrl,
+}));
+
 app.use(express.json());
 app.use(bodyParser.json());
 
@@ -16,56 +25,18 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from the React app
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'public')));
+}
 
+// Load API routes
 const dataRoutes = require('./routes/data');
 app.use('/api', dataRoutes);
 
 const conversationState = {};
 
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// Function to save messages to the database
-async function saveMessage(userId, message, role) {
-  try {
-    await pool.query(
-      'INSERT INTO chat_messages (user_id, message, role) VALUES ($1, $2, $3)',
-      [userId, message, role]
-    );
-  } catch (err) {
-    console.error('Error saving message to database:', err);
-  }
-}
-
-// Helper function to get chatbot response
-async function getChatbotResponse(messages) {
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages,
-      max_tokens: 100,
-      temperature: 0.7,
-    });
-
-    return response.choices[0].message.content;
-  } catch (error) {
-    console.error('Error connecting to OpenAI:', error);
-    throw new Error('An error occurred while communicating with OpenAI.');
-  }
-}
-
-function getFeedbackQuestion(category, streamerName) {
-  const feedbackCategories = {
-    communityManagement: `How do you feel about the community management on ${streamerName}'s stream? Are the chat rules fair, and is moderation effective?`,
-    contentProduction: `What do you think about the content production quality on ${streamerName}'s stream? Are the videos engaging and well-edited? Is the streaming setup professional?`,
-    marketingStrategies: `How effective do you think ${streamerName}'s marketing strategies are? Are the social media promotions appealing and engaging?`
-  };
-  return feedbackCategories[category];
-}
-
-const categoriesOrder = ['communityManagement', 'contentProduction', 'marketingStrategies'];
-
+// Chatbot route
 app.post('/api/chat', async (req, res) => {
   const { userId, message } = req.body;
 
@@ -109,7 +80,7 @@ app.post('/api/chat', async (req, res) => {
   }
 
   userState.messages.push({ role: 'user', content: message });
-  await saveMessage(userId, message, 'user'); // Save user's message
+  await saveMessage(userId, message, 'user'); 
 
   if (userState.currentCategoryIndex < categoriesOrder.length) {
     const nextQuestion = getFeedbackQuestion(categoriesOrder[userState.currentCategoryIndex], userState.streamerName);
@@ -130,3 +101,42 @@ app.post('/api/chat', async (req, res) => {
     return res.json({ reply: finalResponse });
   }
 });
+
+// Default route for production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
+}
+
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Function to save messages to the database
+async function saveMessage(userId, message, role) {
+  try {
+    await pool.query(
+      'INSERT INTO chat_messages (user_id, message, role) VALUES ($1, $2, $3)',
+      [userId, message, role]
+    );
+  } catch (err) {
+    console.error('Error saving message to database:', err);
+  }
+}
+
+// Helper function to get chatbot response
+async function getChatbotResponse(messages) {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages,
+      max_tokens: 100,
+      temperature: 0.7,
+    });
+
+    return response.choices[0].message.content;
+  } catch (error) {
+    console.error('Error connecting to OpenAI:', error);
+    throw new Error('An error occurred while communicating with OpenAI.');
+  }
+}

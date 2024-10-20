@@ -1,13 +1,12 @@
-// api/db.js
-require('dotenv').config();
 const { Pool } = require('pg');
+require('dotenv').config();
 
-// Create a new PostgreSQL connection pool
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Configure the pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: isProduction ? { rejectUnauthorized: false } : false, // Disable SSL for local development
 });
 
 module.exports = pool;

@@ -41,8 +41,7 @@ router.post('/create-session', async (req, res) => {
 
     // Send back the unique link for the streamer to access their dashboard
     res.json({
-      link: `localhost:3000/chat/${streamerName}?token=${token}`,
-      // link: `https://secure-dusk-86046-23b5df488cf4.herokuapp.com/chat/${streamerName}?token=${token}`,
+      link: `localhost:3000/chat/${streamerName}?token=${token} or https://secure-dusk-86046-23b5df488cf4.herokuapp.com/chat/${streamerName}?token=${token}`,
       token: token
     });
   } catch (err) {

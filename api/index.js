@@ -39,10 +39,10 @@ app.use((req, res, next) => {
   next();
 });
 
-//handling the root route path
-app.get('/', (req, res) => {
-  res.send('Welcome to the API!');  // Simple response for root URL
-});
+// //handling the root route path
+// app.get('/', (req, res) => {
+//   res.send('Welcome to the API!');  // Simple response for root URL
+// });
 
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, 'client/build')));

@@ -14,7 +14,7 @@ const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 // CORS setup to allow frontend URL
 app.use(cors({
-  origin: frontendUrl,
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000'
 }));
 
 app.use(express.json());
@@ -39,17 +39,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// //handling the root route path
-// app.get('/', (req, res) => {
-//   res.send('Welcome to the API!');  // Simple response for root URL
-// });
-
 // Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // Serve index.html for any unknown routes
 app.get('*', (req, res) => {
-res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
 const conversationState = {};

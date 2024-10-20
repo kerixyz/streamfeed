@@ -7,6 +7,8 @@ import './App.css'
 // import Feedback from './pages/Feedback';
 
 function App() {
+  console.log('REACT_APP_API_BASE_URL at build:', process.env.REACT_APP_API_BASE_URL);
+
   return (
     <Router>
       <Routes>

@@ -357,9 +357,9 @@ function createAdaptivePrompt(streamerName) {
   
 // Function to randomly assign a version
 function assignVersion() {
-    const versions = ['adaptive', 'hybrid'];
-    return versions[Math.floor(Math.random() * versions.length)];
-    // return version='adaptive';
+    // const versions = ['adaptive', 'hybrid'];
+    // return versions[Math.floor(Math.random() * versions.length)];
+    return version='adaptive';
   }
   
 

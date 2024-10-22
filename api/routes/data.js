@@ -71,42 +71,67 @@ router.get('/verify-dashboard-access', async (req, res) => {
   }
 });
 
-// Route to save a chat message
+// Route to save a chat message with category
 router.post('/save-chat-message', async (req, res) => {
-  const { userId, streamerName, message, role } = req.body;
-
-  try {
-    // Insert the message into the chat_messages table
-    await pool.query(
-      'INSERT INTO chat_messages (user_id, streamer_name, message, role, created_at) VALUES ($1, $2, $3, $4, NOW())',
-      [userId, streamerName, message, role]
-    );
-    res.json({ success: true });
-  } catch (err) {
-    console.error('Error saving message to database:', err);
-    res.status(500).json({ error: 'Failed to save message' });
-  }
-});
-
-router.get('/get-chat-messages', async (req, res) => {
-    const { userId, streamerName } = req.query;
+    const { userId, streamerName, message, role, category } = req.body;
   
     try {
-      const result = await pool.query(
-        'SELECT * FROM chat_messages WHERE streamer_name = $1 AND user_id = $2 ORDER BY created_at ASC',
-        [streamerName, userId]
+      // Insert the message into the chat_messages table
+      await pool.query(
+        'INSERT INTO chat_messages (user_id, streamer_name, message, role, category, created_at) VALUES ($1, $2, $3, $4, $5, NOW())',
+        [userId, streamerName, message, role, category]
       );
+      res.json({ success: true });
+    } catch (err) {
+      console.error('Error saving message to database:', err);
+      res.status(500).json({ error: 'Failed to save message' });
+    }
+  });
   
-      if (result.rows.length > 0) {
-        res.json({ messages: result.rows });
-      } else {
-        res.json({ messages: [] });
+
+// router.get('/get-chat-messages', async (req, res) => {
+//     const { userId, streamerName } = req.query;
+  
+//     try {
+//       const result = await pool.query(
+//         'SELECT * FROM chat_messages WHERE streamer_name = $1 AND user_id = $2 ORDER BY created_at ASC',
+//         [streamerName, userId]
+//       );
+  
+//       if (result.rows.length > 0) {
+//         res.json({ messages: result.rows });
+//       } else {
+//         res.json({ messages: [] });
+//       }
+//     } catch (err) {
+//       console.error('Error fetching chat messages:', err);
+//       res.status(500).json({ error: 'Failed to fetch messages' });
+//     }
+// });
+  
+// Route to fetch chat messages filtered by streamer name (userId is optional)
+router.get('/get-chat-messages', async (req, res) => {
+    const { userId, streamerName } = req.query;
+    
+    try {
+      let query = 'SELECT * FROM chat_messages WHERE streamer_name = $1';
+      const params = [streamerName];
+  
+      if (userId) {
+        query += ' AND user_id = $2';
+        params.push(userId);
       }
+  
+      query += ' ORDER BY created_at ASC';
+  
+      const result = await pool.query(query, params);
+  
+      res.json({ messages: result.rows });
     } catch (err) {
       console.error('Error fetching chat messages:', err);
       res.status(500).json({ error: 'Failed to fetch messages' });
     }
-});
+  });
   
 // Route to save the user's assigned version
 router.post('/save-user-version', async (req, res) => {

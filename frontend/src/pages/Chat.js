@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useLocation } from 'react-router-dom';
+import DashboardView from '../components/DashboardView';
 
 // Environment toggle (local vs. Heroku)
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
@@ -135,6 +136,9 @@ const Chat = () => {
           {isStreamer ? `Welcome to your dashboard, ${streamer}!` : `Chat to give feedback to ${streamer}`}
         </h1>
 
+        {/* Render DashboardView component only if it's the streamer's view */}
+        {isStreamer && <DashboardView streamer={streamer} />}
+        
         {error && (
           <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
             {error}

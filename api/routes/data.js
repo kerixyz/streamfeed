@@ -102,43 +102,99 @@ router.post('/save-chat-message', async (req, res) => {
   }
 });
 
-// Route to fetch all chat messages for a streamer
-router.get('/get-chat-messages', async (req, res) => {
-  const { streamerName } = req.query;
+// Old Route to fetch all chat messages for a streamer
+// router.get('/get-chat-messages', async (req, res) => {
+//   const { streamerName } = req.query;
 
-  console.log('Fetching messages for streamer:', streamerName); // Log the streamer name for debugging
+// //   console.log('Fetching messages for streamer:', streamerName); // Log the streamer name for debugging
 
-  try {
-    const result = await pool.query(
-      'SELECT * FROM chat_messages WHERE streamer_name = $1 ORDER BY created_at ASC',
-      [streamerName]
-    );
+//   try {
+//     const result = await pool.query(
+//       'SELECT * FROM chat_messages WHERE streamer_name = $1 ORDER BY created_at ASC',
+//       [streamerName]
+//     );
     
-    // Log the result from the database
-    console.log('Messages from database:', result.rows);
+//     // Log the result from the database
+//     // console.log('Messages from database:', result.rows);
 
-    if (result.rows.length > 0) {
-      res.json({ messages: result.rows });
-    } else {
-      res.json({ messages: [] });
+//     if (result.rows.length > 0) {
+//       res.json({ messages: result.rows });
+//     } else {
+//       res.json({ messages: [] });
+//     }
+//   } catch (err) {
+//     console.error('Error fetching chat messages:', err);
+//     res.status(500).json({ error: 'Failed to fetch messages' });
+//   }
+// });
+router.get('/get-chat-messages', async (req, res) => {
+    const { userId, streamerName } = req.query;
+  
+    try {
+      const result = await pool.query(
+        'SELECT * FROM chat_messages WHERE streamer_name = $1 AND user_id = $2 ORDER BY created_at ASC',
+        [streamerName, userId]
+      );
+  
+      if (result.rows.length > 0) {
+        res.json({ messages: result.rows });
+      } else {
+        res.json({ messages: [] });
+      }
+    } catch (err) {
+      console.error('Error fetching chat messages:', err);
+      res.status(500).json({ error: 'Failed to fetch messages' });
     }
-  } catch (err) {
-    console.error('Error fetching chat messages:', err);
-    res.status(500).json({ error: 'Failed to fetch messages' });
-  }
-});
+  });
+  
 
+// Route to save the user's assigned version
+router.post('/save-user-version', async (req, res) => {
+    const { userId, version } = req.body;
+  
+    try {
+      await pool.query(
+        'INSERT INTO user_versions (user_id, version) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET version = $2',
+        [userId, version]
+      );
+      res.json({ success: true });
+    } catch (err) {
+      console.error('Error saving user version:', err);
+      res.status(500).json({ error: 'Failed to save user version' });
+    }
+  });
+  
+  // Route to fetch the user's assigned version
+  router.get('/get-user-version', async (req, res) => {
+    const { userId } = req.query;
+  
+    try {
+      const result = await pool.query(
+        'SELECT version FROM user_versions WHERE user_id = $1',
+        [userId]
+      );
+  
+      if (result.rows.length > 0) {
+        res.json({ version: result.rows[0].version });
+      } else {
+        res.json({ version: null });
+      }
+    } catch (err) {
+      console.error('Error retrieving user version:', err);
+      res.status(500).json({ error: 'Failed to retrieve user version' });
+    }
+  });
 
 
 //this was the original code that should essentially just show the data in the website lol but it kept breaking or not loading but keeping it here anyway
-router.get('/data', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM chatbot_db');
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Database connection error', err); // Log the error details
-    res.status(500).json({ error: 'Database error', details: err.message });
-  }
-});
+// router.get('/data', async (req, res) => {
+//   try {
+//     const result = await pool.query('SELECT * FROM chatbot_db');
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error('Database connection error', err); // Log the error details
+//     res.status(500).json({ error: 'Database error', details: err.message });
+//   }
+// });
 
 module.exports = router;

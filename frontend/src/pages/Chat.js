@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
 // Environment toggle (local vs. Heroku)
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
@@ -10,86 +10,113 @@ const Chat = () => {
   const location = useLocation();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userId, setUserId] = useState('');
   const [isStreamer, setIsStreamer] = useState(false);
   const [error, setError] = useState(null);
 
-  // Token verification logic
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get('token');
 
-    const verifyToken = async () => {
-      if (token) {
-        try {
-          // Verify the token with the backend
-          const response = await axios.get(`${BASE_URL}/verify-dashboard-access?streamerName=${streamer}&token=${token}`);
-          if (response.data.valid) {
-            console.log('Token is valid, setting streamer mode');
-            setIsStreamer(true); // Token is valid, user is a streamer
-            await loadChatHistory(); // Load chat history after verification
-          } else {
-            setError('Invalid token or unauthorized access');
-            console.log('Invalid token');
-          }
-        } catch (err) {
-          console.error('Error verifying token:', err);
-          setError('Unable to verify token');
-        }
-      } else {
-        // If no token is provided, handle as viewer access (no streamer privileges)
-        console.log('No token provided, viewer mode');
-        setIsStreamer(false);  // Explicitly set to viewer mode
-        await loadChatHistory(); // Load chat history for viewers as well
+    // Check if it's a streamer view by presence of token
+    if (token) {
+      verifyStreamerAccess(token);
+    } else {
+      const storedUserId = localStorage.getItem('userId');
+      if (storedUserId) {
+        setUserId(storedUserId);
+        loadChatHistory(storedUserId); // Load chat history for viewers
       }
-    };
-
-    const loadChatHistory = async () => {
-      try {
-        console.log('Loading chat history for streamer:', streamer); // Log the streamer for debugging
-        const response = await axios.get(`${BASE_URL}/get-chat-messages?streamerName=${streamer}`);
-        
-        console.log('Chat history response:', response.data.messages); // Log the response
-        
-        if (response.data.messages && response.data.messages.length > 0) {
-          setMessages(response.data.messages); // Update messages state
-          console.log('Messages loaded into state:', response.data.messages);
-        } else {
-          console.log('No messages found for this streamer');
-        }
-      } catch (err) {
-        console.error('Error loading chat history:', err);
-      }
-    };
-
-    verifyToken();
+    }
   }, [streamer, location]);
 
+  // Function to verify streamer's token
+  const verifyStreamerAccess = async (token) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/verify-dashboard-access?streamerName=${streamer}&token=${token}`
+      );
+      if (response.data.valid) {
+        setIsStreamer(true); // Token is valid, user is a streamer
+        await loadChatHistory(); // Load chat history for streamers
+      } else {
+        setError('Invalid token or unauthorized access');
+      }
+    } catch (err) {
+      console.error('Error verifying token:', err);
+      setError('Unable to verify token');
+    }
+  };
+
+  const loadChatHistory = async (id = null) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/get-chat-messages?${id ? `userId=${id}&` : ''}streamerName=${streamer}`
+      );
+  
+      if (response.data.messages) {
+        const filteredMessages = response.data.messages.filter(msg => msg.message && msg.message.trim() !== '');
+        const formattedMessages = filteredMessages.map(msg => ({
+          role: msg.role,
+          content: msg.message,
+        }));
+        setMessages(formattedMessages);
+      }
+    } catch (err) {
+      console.error('Error loading chat history:', err);
+    }
+  };
+  
+  // Handle name submission for viewers
+  const handleNameSubmit = async () => {
+    if (userName.trim() !== '') {
+      const generatedUserId = `viewer_${userName}_${Date.now()}`;
+      setUserId(generatedUserId);
+      localStorage.setItem('userId', generatedUserId);
+
+      // Save the user version and start chat history
+      await saveUserVersion(generatedUserId, 'adaptive');
+      loadChatHistory(generatedUserId);
+    }
+  };
+
+  // Save user version to the backend
+  const saveUserVersion = async (id, version) => {
+    try {
+      await axios.post(`${BASE_URL}/save-user-version`, { userId: id, version });
+    } catch (err) {
+      console.error('Error saving user version:', err);
+    }
+  };
+
   const handleSendMessage = async () => {
-    console.log('Input value:', input); // Log the input to verify it
-    if (input.trim() === '') return; // If input is empty, do nothing
+    if (input.trim() === '' || !userId) return;
 
     const newMessage = { role: 'user', content: input };
     setMessages([...messages, newMessage]);
 
     try {
-      // Save the user message to the database
+      // Save the message to the chat_messages table
       await axios.post(`${BASE_URL}/save-chat-message`, {
-        userId: 'viewer',
+        userId,
         streamerName: streamer,
         message: input,
         role: 'user',
       });
 
+      // Get the response from the chatbot API
       const response = await axios.post(`${BASE_URL}/chat`, {
+        userId,
         message: input,
       });
 
       const botMessage = { role: 'bot', content: response.data.reply };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
 
-      // Save the bot message to the database
+      // Save the bot's reply to the chat_messages table
       await axios.post(`${BASE_URL}/save-chat-message`, {
-        userId: 'bot',
+        userId,
         streamerName: streamer,
         message: response.data.reply,
         role: 'bot',
@@ -98,89 +125,65 @@ const Chat = () => {
       console.error('Error sending message:', error);
     }
 
-    setInput(''); // Clear the input after sending
+    setInput('');
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-lightBlue p-4">
       <div className="w-full max-w-2xl">
-        {/* Page Title */}
         <h1 className="text-center text-3xl font-bold text-deepNavy mb-6">
-          {isStreamer ? `Welcome to your dashboard, ${streamer}!` : `Chat with ${streamer}`}
+          {isStreamer ? `Welcome to your dashboard, ${streamer}!` : `Chat to give feedback to ${streamer}`}
         </h1>
 
-        {/* Error Message */}
         {error && (
           <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
             {error}
           </div>
         )}
-        {/* Streamer Dashboard View */}
-        {!error && isStreamer && (
-          <div className="flex flex-col bg-white shadow-lg rounded-lg p-6 space-y-6">
-            {/* Placeholder Header */}
-            <h2 className="text-2xl font-semibold text-deepNavy mb-4">
-              Your Chat Statistics and Controls
-            </h2>
 
-            {/* Chat Statistics Section */}
-            <div className="bg-softGray p-4 rounded-lg">
-              <h3 className="text-xl font-bold text-deepNavy mb-2">Chat Statistics</h3>
-              <ul className="list-disc ml-5 text-deepNavy space-y-1">
-                <li>Total messages: <span className="font-semibold">150</span></li>
-                <li>Average response time: <span className="font-semibold">5.2 seconds</span></li>
-                <li>Top keywords: <span className="font-semibold">"feedback", "stream", "viewers"</span></li>
-              </ul>
-            </div>
-
-            {/* Streamer Controls Section */}
-            <div className="bg-softGray p-4 rounded-lg">
-              <h3 className="text-xl font-bold text-deepNavy mb-2">Controls</h3>
-              <div className="flex flex-col space-y-3">
-                <button className="bg-deepNavy text-white py-2 rounded-lg hover:bg-primaryYellow transition">
-                  End Current Session
-                </button>
-                <button className="bg-deepNavy text-white py-2 rounded-lg hover:bg-primaryYellow transition">
-                  View Chat History
-                </button>
-                <button className="bg-deepNavy text-white py-2 rounded-lg hover:bg-primaryYellow transition">
-                  Export Chat Data
-                </button>
-              </div>
-            </div>
-
-            {/* Placeholder for Future Dashboard Components */}
-            <div className="bg-softGray p-4 rounded-lg">
-              <h3 className="text-xl font-bold text-deepNavy mb-2">Coming Soon</h3>
-              <p className="text-deepNavy">
-                More analytics, engagement metrics, and chat moderation tools are on the way!
-              </p>
-            </div>
+        {/* Name Input for Viewers */}
+        {!isStreamer && !userId && (
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-deepNavy mb-2">Enter your name to start chatting:</h2>
+            <input
+              type="text"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryYellow"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="Your name..."
+            />
+            <button
+              className="bg-primaryYellow text-deepNavy px-4 py-2 mt-2 rounded-lg hover:bg-yellow-500 transition"
+              onClick={handleNameSubmit}
+            >
+              Start Chatting
+            </button>
           </div>
         )}
 
-        {/* Viewer Chat View */}
-        {!error && !isStreamer && (
+        {/* Chat Box */}
+        {userId && (
           <div className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
-            {/* Chat Box with Fixed Height */}
             <div className="chat-box h-96 p-4 overflow-y-auto">
-              {messages.map((msg, index) => (
+            {messages.map((msg, index) => (
                 <div
-                  key={index}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}
+                key={index}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}
                 >
-                  <div
+                {msg.content && (
+                    <div
                     className={`px-4 py-2 rounded-lg ${
-                      msg.role === 'user' ? 'bg-deepNavy text-white' : 'bg-softGray text-deepNavy'
+                        msg.role === 'user' ? 'bg-deepNavy text-white' : 'bg-softGray text-deepNavy'
                     } max-w-xs`}
-                  >
+                    >
                     <strong>{msg.role === 'user' ? 'You' : 'Bot'}:</strong> {msg.content}
-                  </div>
+                    </div>
+                )}
                 </div>
-              ))}
+            ))}
             </div>
 
-            {/* Input Area */}
+
             <div className="flex items-center border-t border-softGray p-2">
               <input
                 type="text"

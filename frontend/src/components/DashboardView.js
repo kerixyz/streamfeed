@@ -40,7 +40,7 @@ const DashboardView = ({ streamer }) => {
     <div className="w-full max-w-2xl">
       <h2 className="text-2xl font-semibold text-deepNavy mb-4">Streamer Dashboard</h2>
 
-      {/* User Versions Table */}
+      {/* User Versions Table
       <div className="mb-6">
         <h3 className="text-xl font-semibold text-deepNavy mb-4">User Versions</h3>
         {userVersions.length > 0 ? (
@@ -65,7 +65,7 @@ const DashboardView = ({ streamer }) => {
         ) : (
           <p className="text-deepNavy">No user versions found.</p>
         )}
-      </div>
+      </div> */}
 
       {/* Chat Messages Table */}
       <div>

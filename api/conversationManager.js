@@ -75,12 +75,67 @@ function isConstructive(response, feedbackType, userState) {
 
     return minLengthCheck && justificationCheck && actionabilityCheck && !isRepeatedResponse;
 }
+
+async function generateHybridInitialQ(category, feedbackType, streamerName, openai) {
+    const prompt = `Rephrase this question in a friendly and conversational tone: 
+                    "What do you think are ${streamerName}'s ${feedbackType} in ${category}?"`;
+
+    const response = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 100,
+        temperature: 0.7,
+    });
+
+    return response.choices[0].message.content;
+}
+  
+// Helper function to generate clarifying questions for the hybrid model using ChatGPT
+async function generateHybridClarifyingQ(response, feedbackType, openai) {
+    const prompt = `The user provided this feedback: "${response}". 
+                    Generate a follow-up question that encourages the user to make the feedback more 
+                    ${feedbackType === 'strengths' ? 'justifiable' : 'actionable'}, in a friendly tone.`;
+
+    const clarificationResponse = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 100,
+        temperature: 0.7,
+    });
+
+    return clarificationResponse.choices[0].message.content;
+}
+
+// Helper function to let ChatGPT assess constructiveness
+async function assessHybridConstructiveness(message, feedbackType, openai) {
+    const constructivenessPrompt = `
+      The user provided the following feedback: "${message}". 
+      Evaluate whether this feedback is:
+      - Specific: Is the feedback detailed and clear, with at least 5 characters?
+      - Justifiable (for strengths): Does the feedback include a reason why it's a strength (e.g., "because", "due to")?
+      - Actionable (for improvements): Does the feedback suggest a possible action (e.g., "should", "could")?
+  
+      If the feedback is not fully constructive, suggest how it could be improved. 
+      If it is constructive, respond with "constructive".
+    `;
+  
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [{ role: 'user', content: constructivenessPrompt }],
+      max_tokens: 200,
+      temperature: 0.7,
+    });
+  
+    return response.choices[0].message.content;
+  }
+  
+  
   
 // Main function to handle user messages
 async function handleMessage(userId, message, openai, streamerName = 'the streamer') {
     if (!conversationState[userId]) {
-        const assignedVersion = assignVersion();
-        conversationState[userId] = {
+      const assignedVersion = assignVersion();
+      conversationState[userId] = {
         version: assignedVersion,
         messages: [],
         awaitingConfirmation: true,
@@ -89,40 +144,42 @@ async function handleMessage(userId, message, openai, streamerName = 'the stream
         streamerName,
         awaitingFirstFeedback: true,
         previousResponses: []  // Store previous responses to prevent repetition
-        };
-
-        const introMessage = `Hi, I'm Evalubot to help gather feedback for ${streamerName}. 
+      };
+  
+      const introMessage = `Hi, I'm Evalubot to help gather feedback for ${streamerName}. 
                             I'll ask you some questions that we'll provide to the streamer 
                             and researchers studying this prototype. 
                             Reply with 'ok' to continue.`;
-        conversationState[userId].messages.push({ role: 'assistant', content: introMessage });
-        return introMessage;
+      conversationState[userId].messages.push({ role: 'assistant', content: introMessage });
+      return introMessage;
     }
-
-const userState = conversationState[userId];
-
-// Handle end of conversation
-if (message.toLowerCase() === 'end') {
-    delete conversationState[userId];
-    return 'Thank you for using Evalubot! If you need more assistance, feel free to start a new conversation.';
-}
-
-// Handle user confirmation
-if (userState.awaitingConfirmation) {
-    if (message.toLowerCase() === 'ok') {
-    userState.awaitingConfirmation = false;
-    userState.awaitingFirstFeedback = true;
+  
+    const userState = conversationState[userId];
+  
+    // Handle end of conversation
+    if (message.toLowerCase() === 'end') {
+      delete conversationState[userId];
+      return 'Thank you for using Evalubot! If you need more assistance, feel free to start a new conversation.';
+    }
+  
+    // Handle user confirmation
+    if (userState.awaitingConfirmation) {
+      if (message.toLowerCase() === 'ok') {
+        userState.awaitingConfirmation = false;
+        userState.awaitingFirstFeedback = true;
+      } else {
+        return "Please reply with 'ok' to continue.";
+      }
+    }
+  
+    // Route the conversation to the assigned version
+    if (userState.version === 'manual') {
+      return await handleManualVersion(userId, message, streamerName);
+    } else if (userState.version === 'adaptive') {
+      return await handleAdaptiveVersion(userId, message, openai);
     } else {
-    return "Please reply with 'ok' to continue.";
+      return await handleHybridVersion(userId, message, openai, streamerName);
     }
-}
-
-// Route the conversation to the assigned version
-if (userState.version === 'manual') {
-    return await handleManualVersion(userId, message, streamerName);
-} else {
-    return await handleAdaptiveVersion(userId, message, openai);
-}
 }
 
 // Function to handle the manual version
@@ -188,6 +245,58 @@ async function handleManualVersion(userId, message, streamerName) {
     return nextQuestion;
 }
 
+// Main function to handle the hybrid version
+async function handleHybridVersion(userId, message, openai, streamerName) {
+    const userState = conversationState[userId];
+  
+    // Add the user message to the conversation history
+    userState.messages.push({ role: 'user', content: message });
+  
+    // Ensure the first feedback question is asked before checking constructiveness
+    if (userState.awaitingFirstFeedback) {
+      userState.awaitingFirstFeedback = false;
+  
+      // Generate the first feedback question using ChatGPT
+      const firstCategory = categories[userState.currentCategoryIndex];
+      const firstFeedbackType = feedbackTypes[userState.currentFeedbackType];
+      const firstQuestion = await generateHybridInitialQ(firstCategory, firstFeedbackType, streamerName, openai);
+      userState.messages.push({ role: 'assistant', content: firstQuestion });
+  
+      return firstQuestion;
+    }
+  
+    // Let ChatGPT assess the constructiveness of the response
+    const feedbackType = feedbackTypes[userState.currentFeedbackType];
+    const constructivenessAssessment = await assessHybridConstructiveness(message, feedbackType, openai);
+  
+    // Handle the constructiveness assessment result
+    if (constructivenessAssessment.toLowerCase().includes("constructive")) {
+      // Move to the next feedback type or category
+      if (userState.currentFeedbackType < feedbackTypes.length - 1) {
+        userState.currentFeedbackType++;
+      } else if (userState.currentCategoryIndex < categories.length - 1) {
+        userState.currentCategoryIndex++;
+        userState.currentFeedbackType = 0;
+      } else {
+        const finalResponse = "Thank you for all your feedback! If you have more comments, type 'end' to finish or continue with additional feedback.";
+        userState.messages.push({ role: 'assistant', content: finalResponse });
+        return finalResponse;
+      }
+  
+      // Generate the next question dynamically using ChatGPT
+      const nextCategory = categories[userState.currentCategoryIndex];
+      const nextFeedbackType = feedbackTypes[userState.currentFeedbackType];
+      const nextQuestion = await generateHybridInitialQ(nextCategory, nextFeedbackType, streamerName, openai);
+      userState.messages.push({ role: 'assistant', content: nextQuestion });
+  
+      return nextQuestion;
+    } else {
+      // If not constructive, return the suggested improvement from ChatGPT
+      userState.messages.push({ role: 'assistant', content: constructivenessAssessment });
+      return constructivenessAssessment;
+    }
+  }
+
 // Function to handle the adaptive version
 async function handleAdaptiveVersion(userId, message, openai) {
   const userState = conversationState[userId];
@@ -248,7 +357,10 @@ function createAdaptivePrompt(streamerName) {
   
 // Function to randomly assign a version
 function assignVersion() {
-  return Math.random() < 0.5 ? 'manual' : 'adaptive';
-}
+    const versions = ['adaptive', 'hybrid'];
+    return versions[Math.floor(Math.random() * versions.length)];
+    // return version='adaptive';
+  }
+  
 
 module.exports = { handleMessage };

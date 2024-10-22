@@ -185,19 +185,24 @@ const Chat = () => {
 
 
             <div className="flex items-center border-t border-softGray p-2">
-              <input
-                type="text"
-                className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primaryYellow"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type a message..."
-              />
-              <button
-                className="bg-primaryYellow text-deepNavy px-4 py-2 rounded-r-lg hover:bg-yellow-500 transition"
-                onClick={handleSendMessage}
-              >
-                Send
-              </button>
+                <input
+                    type="text"
+                    className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primaryYellow"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type a message..."
+                    onKeyDown={(e) => {
+                    if (e.key === 'Enter' && input.trim() !== '') {
+                        handleSendMessage();
+                    }
+                    }}
+                />
+                <button
+                    className="bg-primaryYellow text-deepNavy px-4 py-2 rounded-r-lg hover:bg-yellow-500 transition"
+                    onClick={handleSendMessage}
+                >
+                    Send
+                </button>
             </div>
           </div>
         )}

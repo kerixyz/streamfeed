@@ -14,11 +14,12 @@ const conversationManager = require('./conversationManager'); // New module for 
 const apiUrl = process.env.API_URL || 'http://localhost:5001/api';
 const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-// CORS setup to allow frontend URL
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000'
-}));
-
+const corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200,
+  };
+  
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(bodyParser.json());

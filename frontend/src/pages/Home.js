@@ -35,122 +35,78 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-lightBlue flex flex-col items-center py-10 px-4">
-      {/* Header Section */}
-      <header className="w-full max-w-4xl mb-8">
-        <h1 className="text-center text-4xl font-bold text-deepNavy py-4 border-b-2 border-softGray">
-          StreamFeed
-        </h1>
-      </header>
+    <div className="min-h-screen flex flex-col">
       
-      {/* Main Section */}
-      <section className="w-full max-w-4xl bg-softGray rounded-lg p-8 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left Column */}
-          <div>
-          <h2 className="text-2xl font-bold text-deepNavy mb-4">
-            Are You a Live Streamer Looking for Real Feedback?
-          </h2>
-          <p className="text-deepNavy mb-4">
-            Struggling to get meaningful insights about your streams? Unsure about the right questions to ask your audience? Tired of the same old vague comments like "Great stream!"? 
+      {/* First Section */}
+      <section className="flex flex-col md:flex-row items-center justify-between py-10 px-6 bg-gray-100">
+        {/* Left Side */}
+        <div className="md:w-1/2 mb-6 md:mb-0 md:pl-8 max-w-lg">
+          <h1 className="text-4xl font-bold mb-4">StreamFeed</h1>
+          <p className="text-lg">
+            StreamFeed helps you get detailed feedback on your streams. See through your viewers' eyes and make improvements in real-time.
           </p>
-          <p className="text-deepNavy mb-4 font-semibold">
-            What if you could see your content through a third person's eyes?
-          </p>
-          <p className="text-deepNavy">
-            Discover better ways to gather constructive feedback, ask the right questions, and gain a fresh perspective on your streams. Don’t just stream—grow, improve, and thrive!
-          </p>
+        </div>
+
+        {/* Right Side: Placeholder for sample report */}
+        <div className="md:w-1/2 flex justify-center">
+          <div className="w-80 h-60 bg-gray-200 flex items-center justify-center rounded-md">
+            <span className="text-gray-500">[Sample Report Placeholder]</span>
           </div>
+        </div>
+      </section>
+      
+      {/* Second Section */}
+      <section className="flex flex-col items-center py-10 px-6 bg-white">
+        <h2 className="text-3xl font-semibold mb-4">Get Started with Getting Feedback</h2>
+        <input
+          type="text"
+          value={streamerName}
+          onChange={(e) => setStreamerName(e.target.value)}
+          placeholder="Enter your streamer name here"
+          className="mb-6 p-3 w-full max-w-md border rounded-md shadow-sm focus:outline-none"
+        />
 
-          {/* Right Column */}
-          <div className="flex flex-col">
-          <h2 className="text-2xl font-bold text-deepNavy mb-4">
-              Are you a streamer?
-            </h2>
-            <p className="text-deepNavy mb-2">
-              Generate your session link here
-            </p>
-            <input
-              type="text"
-              value={streamerName}
-              onChange={(e) => setStreamerName(e.target.value)}
-              placeholder="Enter your streamer name"
-              className="mb-4 p-2 border border-deepNavy rounded"
-            />
-            <button 
-              className="bg-deepNavy text-white py-2 rounded hover:bg-primaryYellow transition mb-4"
+        <div className="flex flex-col md:flex-row w-full max-w-4xl">
+          {/* Left Side: Feedback with Viewers */}
+          <div className="flex-1 p-4 border rounded-lg m-2 bg-gray-50 md:pl-8">
+            <h3 className="text-xl font-semibold mb-2">Feedback with Your Viewers</h3>
+            <p className="mb-4">Generate a session to start collecting feedback directly from your viewers.</p>
+            <button
               onClick={createSession}
+              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-500 transition"
             >
-              Create Session
+              Generate Session
             </button>
-
             {sessionLink && (
-              <div className="mt-3">
-                <p className="text-deepNavy">
-                  Your session has been created! Here is your dashboard link:
-                </p>
-                <a 
-                  href={sessionLink} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-primaryYellow underline"
-                >
+              <div className="mt-3 text-blue-600">
+                <p>Your session has been created:</p>
+                <a href={sessionLink} target="_blank" rel="noopener noreferrer" className="underline">
                   {sessionLink}
                 </a>
               </div>
             )}
             {error && <p className="text-red-500 mt-3">{error}</p>}
+          </div>
 
-            <h2 className="text-2xl font-bold text-deepNavy mb-4">
-              Are you a viewer trying to access your streamer's link?
-            </h2>
-            <p className="text-deepNavy mb-2">
-              Try visiting streamfeed.com/chat/[streamername]
-            </p>
+          {/* Right Side: Feedback with Agents */}
+          <div className="flex-1 p-4 border rounded-lg m-2 bg-gray-50">
+            <h3 className="text-xl font-semibold mb-2">Feedback with Agents</h3>
+            <p className="mb-4">Use AI agents to automatically gather insights about your stream.</p>
+            <button
+              className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-500 transition"
+              onClick={() => alert('Coming Soon!')}
+            >
+              Get Started
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Upcoming Projects Section */}
-      <section className="w-full max-w-4xl bg-softGray rounded-lg p-8 mb-8">
-        <h2 className="text-xl font-semibold mb-4 text-deepNavy">
-          Upcoming Projects
-        </h2>
-        <p>Learn more about our other upcoming projects</p>
-        {/* <ul className="list-disc ml-5 text-deepNavy mb-4">
-          <li>Learn more about other ongoing projects</li>
-        </ul> */}
-        <p className="text-deepNavy mb-2">
-          Join our mailing list to stay updated:
-        
-        <input
-          type="text"
-          placeholder="Enter your email"
-          className="mb-4 p-2 border border-deepNavy rounded"
-        />
-        </p>
-
-        {/* Related Work Section */}
-        <h2 className="text-xl font-semibold mb-4 text-deepNavy">
-          Related Work
-        </h2>
-        <p><a href="https://dl.acm.org/doi/abs/10.1145/3411764.3445320">Understanding Analytics Needs of Live Streamers</a></p>
-
-        {/* About Section */}
-        <h2 className="text-xl font-semibold mb-4 text-deepNavy">Who are we?</h2>
-        <p>This is an ongoing research project at the University of Washington. By clicking create session, you consent to ....</p>
-        <p>For any questions, comments, or feedback, please direct them to kmallari[at]uw[dot]edu</p>
-        {/* <ul className="list-disc ml-5 text-deepNavy">
-          <li>PhD student at UW</li>
-        </ul> */}
-      </section>
-
-      {/* <section className="w-full max-w-4xl bg-softGray rounded-lg p-8 mb-8"> */}        
-      {/* </section> */}
-
-      {/* <section className="w-full max-w-4xl bg-softGray rounded-lg p-8"> */}
-      {/* </section> */}
-
+      {/* Footer Section */}
+      <footer className="py-6 px-6 bg-gray-100 text-center text-gray-600">
+        <p>This is an ongoing research project at the University of Washington.</p>
+        <p>For questions, comments, or feedback, please contact: kmallari[at]uw[dot]edu</p>
+      </footer>
     </div>
   );
 };

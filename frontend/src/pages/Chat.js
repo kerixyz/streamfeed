@@ -93,10 +93,10 @@ const Chat = () => {
 
   const handleSendMessage = async () => {
     if (input.trim() === '' || !userId) return;
-
+  
     const newMessage = { role: 'user', content: input };
     setMessages([...messages, newMessage]);
-
+  
     try {
       // Save the message to the chat_messages table
       await axios.post(`${BASE_URL}/save-chat-message`, {
@@ -105,114 +105,110 @@ const Chat = () => {
         message: input,
         role: 'user',
       });
-
+  
       // Get the response from the chatbot API
       const response = await axios.post(`${BASE_URL}/chat`, {
         userId,
         message: input,
       });
-
-      const botMessage = { role: 'bot', content: response.data.reply };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-
-      // Save the bot's reply to the chat_messages table
-      await axios.post(`${BASE_URL}/save-chat-message`, {
-        userId,
-        streamerName: streamer,
-        message: response.data.reply,
-        role: 'bot',
-      });
+  
+      if (response.data && response.data.reply) {
+        const botMessage = { role: 'bot', content: response.data.reply };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+  
+        // Save the bot's reply to the chat_messages table
+        await axios.post(`${BASE_URL}/save-chat-message`, {
+          userId,
+          streamerName: streamer,
+          message: response.data.reply,
+          role: 'bot',
+        });
+      } else {
+        console.error('Unexpected response structure:', response.data);
+      }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message:', error.response?.data || error.message);
     }
-
+  
     setInput('');
   };
+  
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-lightBlue p-4">
-      <div className="w-full max-w-2xl">
-        <h1 className="text-center text-3xl font-bold text-deepNavy mb-6">
-          {isStreamer ? `Welcome to your dashboard, ${streamer}!` : `Chat to give feedback to ${streamer}`}
-        </h1>
-
-        {/* Render DashboardView component only if it's the streamer's view */}
-        {isStreamer && <DashboardView streamer={streamer} />}
-        
-        {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
-            {error}
-          </div>
-        )}
-
-        {/* Name Input for Viewers */}
-        {!isStreamer && !userId && (
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold text-deepNavy mb-2">Enter your name to start chatting:</h2>
-            <input
-              type="text"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryYellow"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              placeholder="Your name..."
-            />
-            <button
-              className="bg-primaryYellow text-deepNavy px-4 py-2 mt-2 rounded-lg hover:bg-yellow-500 transition"
-              onClick={handleNameSubmit}
-            >
-              Start Chatting
-            </button>
-          </div>
-        )}
-
-        {/* Chat Box */}
-        {userId && (
-          <div className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
-            <div className="chat-box h-96 p-4 overflow-y-auto">
-            {messages.map((msg, index) => (
-                <div
-                key={index}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}
-                >
-                {msg.content && (
-                    <div
-                    className={`px-4 py-2 rounded-lg ${
-                        msg.role === 'user' ? 'bg-deepNavy text-white' : 'bg-softGray text-deepNavy'
-                    } max-w-xs`}
-                    >
+    <div className="min-h-screen flex flex-col items-center py-10 px-4 md:px-6 bg-white">
+      {/* Streamer Dashboard */}
+      {isStreamer && <DashboardView streamer={streamer} />}
+  
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded max-w-md">
+          {error}
+        </div>
+      )}
+  
+      {/* Name Input for Viewers */}
+      {!isStreamer && !userId && (
+        <div className="w-full max-w-md mb-6">
+          <h2 className="text-xl font-semibold mb-2">Enter your name to start chatting:</h2>
+          <input
+            type="text"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="Your name..."
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleNameSubmit}
+            className="w-full bg-blue-600 text-white py-2 mt-2 rounded-lg hover:bg-blue-500 transition"
+          >
+            Start Chatting
+          </button>
+        </div>
+      )}
+  
+      {/* Chat Box */}
+      {userId && (
+        <>
+          <h2 className="text-xl font-semibold mb-2">Thanks for giving feedback to {streamer}</h2>
+          <div className="flex flex-col w-full max-w-4xl md:max-w-2xl lg:max-w-lg bg-gray-100 rounded-lg shadow-md overflow-hidden">
+            {/* Messages Container */}
+            <div className="flex-grow h-96 md:h-80 overflow-auto p-4">
+              {messages.map((msg, index) => (
+                <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}>
+                  <div className={`px-4 py-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-900'} max-w-xs md:max-w-md lg:max-w-lg`}>
                     <strong>{msg.role === 'user' ? 'You' : 'Bot'}:</strong> {msg.content}
-                    </div>
-                )}
+                  </div>
                 </div>
-            ))}
+              ))}
             </div>
-
-
-            <div className="flex items-center border-t border-softGray p-2">
-                <input
-                    type="text"
-                    className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primaryYellow"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type a message..."
-                    onKeyDown={(e) => {
-                    if (e.key === 'Enter' && input.trim() !== '') {
-                        handleSendMessage();
-                    }
-                    }}
-                />
-                <button
-                    className="bg-primaryYellow text-deepNavy px-4 py-2 rounded-r-lg hover:bg-yellow-500 transition"
-                    onClick={handleSendMessage}
-                >
-                    Send
-                </button>
+  
+            {/* Input Container */}
+            <div className="flex items-center border-t p-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type a message..."
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && input.trim() !== '') {
+                    handleSendMessage();
+                  }
+                }}
+                className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleSendMessage}
+                className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-500 transition"
+              >
+                Send
+              </button>
             </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
+  
 };
 
 export default Chat;

@@ -98,12 +98,65 @@ const Home = () => {
           <div className="flex-1 p-4 border rounded-lg m-2 bg-gray-50">
             <h3 className="text-xl font-semibold mb-2">Feedback with Agents</h3>
             <p className="mb-4">Use AI agents to automatically gather insights about your stream.</p>
-            <button
+            
+            <p className="mb-4 text-center">Coming Soon!</p>
+            {/* <button
               className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-500 transition"
               onClick={() => alert('Coming Soon!')}
             >
               Get Started
-            </button>
+            </button>*/}
+          </div> 
+        </div>
+      </section>
+      {/* How Feedback with Viewers Works */}
+      <section className="py-10 px-6 bg-gray-100">
+        <h2 className="text-3xl font-semibold mb-6 text-center">How Feedback with Viewers Works</h2>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+          {/* Step 1 */}
+          <div className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md">
+            <div className="w-32 h-32 bg-gray-200 flex items-center justify-center rounded-full mb-4">
+              <span className="text-gray-500">[Photo 1]</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Step 1: Start a Session</h3>
+            <p className="text-center text-gray-700">
+              Enter your streamer name and generate a feedback session to share with your viewers.
+            </p>
+          </div>
+
+          {/* Step 2 */}
+          <div className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md">
+            <div className="w-32 h-32 bg-gray-200 flex items-center justify-center rounded-full mb-4">
+              <span className="text-gray-500">[Photo 2]</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Step 2: Collect Feedback</h3>
+            <p className="text-center text-gray-700">
+              Viewers join the chat and provide feedback directly through the session.
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md">
+            <div className="w-32 h-32 bg-gray-200 flex items-center justify-center rounded-full mb-4">
+              <span className="text-gray-500">[Photo 3]</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Step 3: Analyze Results</h3>
+            <p className="text-center text-gray-700">
+              See detailed feedback from viewers and use it to improve your stream content.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* How Feedback with Agents Works */}
+      <section className="py-10 px-6 bg-white">
+        <h2 className="text-3xl font-semibold mb-6 text-center">How Feedback with Agents Works</h2>
+        <div className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg shadow-md">
+          <p className="text-gray-700 mb-2">
+            We're building a new feature that uses AI agents to help you understand feedback better.
+          </p>
+          <div className="w-80 h-60 bg-gray-200 flex items-center justify-center rounded-md">
+            <span className="text-gray-500">[Placeholder for Agent Feature]</span>
           </div>
         </div>
       </section>

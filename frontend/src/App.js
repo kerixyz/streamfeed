@@ -5,6 +5,7 @@ import Chat from './pages/Chat';
 import Navbar from './components/NavBar';
 
 import './App.css'
+import Research from './pages/Research';
 // import Feedback from './pages/Feedback';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/chat/:streamer" element={<Chat />} /> {/* Dynamic route for streamer */}
+        <Route path="/research" element={<Research />} /> 
         {/* <Route path="/feedback" element={<Feedback />} /> */}
       </Routes>
     </Router>

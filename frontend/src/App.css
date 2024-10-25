@@ -2,11 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global styles for your React app */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Add this to your App.css file */
-
-/* General styling for the body with Inter font */
 body {
     font-family: 'Inter', sans-serif;
     margin: 0;

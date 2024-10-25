@@ -19,6 +19,7 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000'
 }));
 
+
 app.use(express.json());
 app.use(bodyParser.json());
 
@@ -33,13 +34,24 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 const dataRoutes = require('./routes/data');
 app.use('/api', dataRoutes);
 
+// Enforce HTTPS and www
 app.use((req, res, next) => {
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; img-src 'self' https://secure-dusk-86046-23b5df488cf4.herokuapp.com; script-src 'self'; style-src 'self';"
-  );
-  next();
-});
+    const isHttps = req.headers['x-forwarded-proto'] === 'https';
+    const isWww = req.headers.host.startsWith('www.');
+  
+    if (!isHttps || !isWww) {
+      return res.redirect(`https://www.streamfeed.xyz${req.url}`);
+    }
+  
+    // Set Content Security Policy
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; img-src 'self' https://www.streamfeed.xyz; script-src 'self'; style-src 'self';"
+    );
+  
+    next();
+  });
+  
 
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, '../frontend/build')));

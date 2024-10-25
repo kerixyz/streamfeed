@@ -72,9 +72,15 @@ const Home = () => {
             <h3 className="text-xl font-semibold mb-2">Feedback with Your Viewers</h3>
             <p className="mb-4">Generate a session to start collecting feedback directly from your viewers.</p>
             <button
-              onClick={createSession}
-              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-500 transition"
-            >
+            onClick={() => {
+              if (!streamerName.trim()) {
+                alert('Please enter your streamer name.');
+                return;
+              }
+              createSession();
+            }}
+            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-500 transition"
+          >
               Generate Session
             </button>
             {sessionLink && (
@@ -104,7 +110,7 @@ const Home = () => {
 
       {/* Footer Section */}
       <footer className="py-6 px-6 bg-gray-100 text-center text-gray-600">
-        <p>This is an ongoing research project at the University of Washington.</p>
+        <p>This is an ongoing research project at the University of Washington. By clicking any of the links above, you acknowledge that your feedback may be used for ongoing research to improve the StreamFeed platform. We collect and analyze feedback to better understand how streamers engage with their audiences. Your participation is voluntary, and all data will be anonymized to ensure your privacy.</p>
         <p>For questions, comments, or feedback, please contact: kmallari[at]uw[dot]edu</p>
       </footer>
     </div>

@@ -53,7 +53,6 @@ app.use((req, res, next) => {
     next();
   });
   
-
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
@@ -202,20 +201,60 @@ app.post('/api/chat', async (req, res) => {
     }
   }
   
-
-// Helper function to get chatbot response
-// async function getChatbotResponse(messages) {
-//   try {
-//     const response = await openai.chat.completions.create({
-//       model: 'gpt-4o-mini',
-//       messages,
-//       max_tokens: 100,
-//       temperature: 0.7,
-//     });
-
-//     return response.choices[0].message.content;
-//   } catch (error) {
-//     console.error('Error connecting to OpenAI:', error);
-//     throw new Error('An error occurred while communicating with OpenAI.');
-//   }
-// }
+  app.get('/get-chat-summaries', async (req, res) => {
+    const { streamerName } = req.query;
+  
+    try {
+      // Example queries
+      const totalMessages = await db.query(`
+        SELECT COUNT(*) AS total_messages
+        FROM chat_messages
+        WHERE streamer_name = $1
+      `, [streamerName]);
+  
+      const averageRating = await db.query(`
+        SELECT AVG(CAST(message AS INTEGER)) AS average_rating
+        FROM chat_messages
+        WHERE streamer_name = $1 AND category = 'rating'
+      `, [streamerName]);
+  
+      const messagesByCategory = await db.query(`
+        SELECT category, COUNT(*) AS count
+        FROM chat_messages
+        WHERE streamer_name = $1
+        GROUP BY category
+      `, [streamerName]);
+  
+      res.json({
+        total_messages: totalMessages.rows[0].total_messages,
+        average_rating: averageRating.rows[0].average_rating,
+        messages_by_category: Object.fromEntries(messagesByCategory.rows.map(row => [row.category, row.count])),
+      });
+    } catch (error) {
+      console.error('Error fetching summaries:', error);
+      res.status(500).send('Server Error');
+    }
+  });
+  
+  router.post('/generate-summaries', async (req, res) => {
+    console.log('Received messages:', req.body.messages);
+  
+    try {
+      const response = await openai.createCompletion({
+        model: 'gpt-4o',
+        prompt: `...`,  // Prompt details
+        max_tokens: 150,
+        temperature: 0.7,
+      });
+  
+      console.log('OpenAI response:', response.data);
+      res.json({
+        why_viewers_watch: response.data.choices[0].text.split('\n')[0].trim(),
+        how_to_improve: response.data.choices[0].text.split('\n')[1].trim(),
+      });
+    } catch (error) {
+      console.error('Error generating summaries:', error);
+      res.status(500).json({ error: 'Failed to generate summaries' });
+    }
+  });
+  

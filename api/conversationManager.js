@@ -129,8 +129,6 @@ async function assessHybridConstructiveness(message, feedbackType, openai) {
     return response.choices[0].message.content;
   }
   
-  
-  
 // Main function to handle user messages
 async function handleMessage(userId, message, openai, streamerName = 'the streamer') {
     if (!conversationState[userId]) {
@@ -295,7 +293,7 @@ async function handleHybridVersion(userId, message, openai, streamerName) {
       userState.messages.push({ role: 'assistant', content: constructivenessAssessment });
       return constructivenessAssessment;
     }
-  }
+}
 
 // Function to handle the adaptive version
 async function handleAdaptiveVersion(userId, message, openai) {

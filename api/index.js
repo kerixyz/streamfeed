@@ -236,7 +236,7 @@ app.post('/api/chat', async (req, res) => {
     }
   });
   
-  router.post('/generate-summaries', async (req, res) => {
+  app.post('/generate-summaries', async (req, res) => {
     console.log('Received messages:', req.body.messages);
   
     try {

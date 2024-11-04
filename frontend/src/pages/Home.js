@@ -108,13 +108,13 @@ const Home = () => {
             Get feedback from your viewers
           </label>
           <label className="flex items-center">
-            {/* <input
+            <input
               type="checkbox"
               checked={feedbackFromExternal}
               onChange={() => setFeedbackFromExternal(!feedbackFromExternal)}
               className="mr-2"
-            /> */}
-            (Coming Soon )
+            />
+            {/* (Coming Soon ) */}
             Get feedback from external users
           </label>
         </div>

@@ -27,20 +27,18 @@ const Home = () => {
         },
         body: JSON.stringify({
           streamerName,
-          feedbackOptions: {
-            viewers: feedbackFromViewers,
-            external: feedbackFromExternal,
-          },
+          feedbackFromViewers,
+          feedbackFromExternal,
         }),
       });
-
+  
       console.log({
         streamerName,
         feedbackFromViewers,
         feedbackFromExternal,
       });
       
-
+  
       if (response.ok) {
         const data = await response.json();
         setSessionLink(data.link);

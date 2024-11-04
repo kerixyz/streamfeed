@@ -29,6 +29,8 @@ router.get('/test-db', async(req,res) => {
 router.post('/create-session', async (req, res) => {
   const { streamerName, feedbackFromViewers, feedbackFromExternal } = req.body;
 
+  console.log("Received values:", { streamerName, feedbackFromViewers, feedbackFromExternal });
+
   // Generate a unique token for the streamer
   const token = generateToken();
 
@@ -38,8 +40,6 @@ router.post('/create-session', async (req, res) => {
       'INSERT INTO sessions (streamer_name, token, feedback_from_viewers, feedback_from_external) VALUES ($1, $2, $3, $4)',
       [streamerName, token, feedbackFromViewers, feedbackFromExternal]
     );
-    console.log("Received values:", { streamerName, feedbackFromViewers, feedbackFromExternal });
-
 
     // Send back the unique link for the streamer to access their dashboard
     res.json({
@@ -51,6 +51,7 @@ router.post('/create-session', async (req, res) => {
     res.status(500).json({ error: 'Failed to create session' });
   }
 });
+
 
 // Route to verify if a token is valid for accessing the dashboard
 router.get('/verify-dashboard-access', async (req, res) => {

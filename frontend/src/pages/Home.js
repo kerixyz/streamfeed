@@ -114,7 +114,7 @@ const Home = () => {
               onChange={() => setFeedbackFromExternal(!feedbackFromExternal)}
               className="mr-2"
             /> */}
-            (Coming Soon)
+            (Coming Soon )
             Get feedback from external users
           </label>
         </div>

@@ -63,72 +63,6 @@ app.get('*', (req, res) => {
 
 const conversationState = {};
 
-// Chatbot route
-// app.post('/api/chat', async (req, res) => {
-//   const { userId, message } = req.body;
-
-//   if (!conversationState[userId]) {
-//     conversationState[userId] = {
-//       messages: [
-//         { role: 'system', content: 'You are Evalubot, an assistant that helps users provide constructive feedback about streamers. Feedback should be specific, actionable, and justifiable.' }
-//       ],
-//       currentCategoryIndex: 0,
-//       streamerName: null,
-//     };
-
-//     const initialBotMessage = 'Hello! I’m Evalubot. I’d like to help you provide feedback about a streamer. Which streamer would you like to give feedback on today?';
-//     conversationState[userId].messages.push({ role: 'assistant', content: initialBotMessage });
-
-//     // Save the initial bot message to the database
-//     await saveMessage(userId, initialBotMessage, 'assistant');
-
-//     return res.json({ reply: initialBotMessage });
-//   }
-
-//   const userState = conversationState[userId];
-
-//   if (message.toLowerCase() === 'end') {
-//     delete conversationState[userId];
-//     return res.json({ reply: 'Thank you for using Evalubot! If you need more assistance, feel free to start a new conversation.' });
-//   }
-
-//   if (!userState.streamerName) {
-//     userState.streamerName = message;
-
-//     const firstQuestion = getFeedbackQuestion(categoriesOrder[userState.currentCategoryIndex], userState.streamerName);
-//     userState.messages.push({ role: 'assistant', content: firstQuestion });
-//     userState.currentCategoryIndex++;
-
-//     // Save the user's message and the bot's first question to the database
-//     await saveMessage(userId, message, 'user');
-//     await saveMessage(userId, firstQuestion, 'assistant');
-
-//     return res.json({ reply: firstQuestion });
-//   }
-
-//   userState.messages.push({ role: 'user', content: message });
-//   await saveMessage(userId, message, 'user'); 
-
-//   if (userState.currentCategoryIndex < categoriesOrder.length) {
-//     const nextQuestion = getFeedbackQuestion(categoriesOrder[userState.currentCategoryIndex], userState.streamerName);
-//     userState.messages.push({ role: 'assistant', content: nextQuestion });
-//     userState.currentCategoryIndex++;
-
-//     // Save the bot's next question to the database
-//     await saveMessage(userId, nextQuestion, 'assistant');
-
-//     return res.json({ reply: nextQuestion });
-//   } else {
-//     const finalResponse = "Thank you for all your feedback! If you have more comments, type 'end' to finish or continue with additional feedback.";
-//     userState.messages.push({ role: 'assistant', content: finalResponse });
-
-//     // Save the final bot message to the database
-//     await saveMessage(userId, finalResponse, 'assistant');
-
-//     return res.json({ reply: finalResponse });
-//   }
-// });
-
 app.post('/api/chat', async (req, res) => {
     const { userId, message } = req.body;
   
@@ -151,11 +85,6 @@ app.post('/api/chat', async (req, res) => {
       return res.status(500).json({ error: 'An error occurred while processing the chat.' });
     }
   });
-  
-  // Function to assign a random version ('manual' or 'adaptive')
-  function assignVersion() {
-    return Math.random() < 0.5 ? 'manual' : 'adaptive';
-  }
   
   // Function to save messages to the database with version info
   async function saveMessage(userId, message, role, version) {

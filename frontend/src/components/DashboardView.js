@@ -4,6 +4,7 @@ import axios from 'axios';
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
 
 const DashboardView = ({ streamer }) => {
+  const [activeTab, setActiveTab] = useState('viewer'); // Track active tab
   const [summaries, setSummaries] = useState({});
   const [chatMessages, setChatMessages] = useState([]);
   const [topSummaries, setTopSummaries] = useState({
@@ -61,6 +62,22 @@ const DashboardView = ({ streamer }) => {
     <div className="min-h-screen flex flex-col items-center py-8 px-4 bg-gray-50">
       <h2 className="text-3xl font-semibold mb-4 text-center">Streamer Dashboard</h2>
 
+      {/* Tab Navigation */}
+      <div className="flex mb-4">
+        <button 
+          className={`px-4 py-2 ${activeTab === 'viewer' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+          onClick={() => setActiveTab('viewer')}
+        >
+          Viewer Feedback
+        </button>
+        <button 
+          className={`px-4 py-2 ${activeTab === 'external' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+          onClick={() => setActiveTab('external')}
+        >
+          External Feedback
+        </button>
+      </div>
+
       {/* Top-Level Summaries */}
       <section className="w-full max-w-5xl mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -85,6 +102,7 @@ const DashboardView = ({ streamer }) => {
           </div>
         </div>
       </section>
+      
 
       {/* Feedback Summaries */}
       <section className="w-full max-w-5xl mb-6">

@@ -27,7 +27,7 @@ router.get('/test-db', async(req,res) => {
 
 // Route for streamers to create a session
 router.post('/create-session', async (req, res) => {
-  const { streamerName } = req.body;
+  const { streamerName, feedbackFromViewers, feedbackFromExternal } = req.body;
 
   // Generate a unique token for the streamer
   const token = generateToken();
@@ -35,8 +35,8 @@ router.post('/create-session', async (req, res) => {
   try {
     // Insert the session into the database
     await pool.query(
-      'INSERT INTO sessions (streamer_name, token) VALUES ($1, $2)',
-      [streamerName, token]
+      'INSERT INTO sessions (streamer_name, token, feedback_from_viewers, feedback_from_external) VALUES ($1, $2, $3, $4)',
+      [streamerName, token, feedbackFromViewers, feedbackFromExternal]
     );
 
     // Send back the unique link for the streamer to access their dashboard
@@ -87,27 +87,6 @@ router.post('/save-chat-message', async (req, res) => {
       res.status(500).json({ error: 'Failed to save message' });
     }
   });
-  
-
-// router.get('/get-chat-messages', async (req, res) => {
-//     const { userId, streamerName } = req.query;
-  
-//     try {
-//       const result = await pool.query(
-//         'SELECT * FROM chat_messages WHERE streamer_name = $1 AND user_id = $2 ORDER BY created_at ASC',
-//         [streamerName, userId]
-//       );
-  
-//       if (result.rows.length > 0) {
-//         res.json({ messages: result.rows });
-//       } else {
-//         res.json({ messages: [] });
-//       }
-//     } catch (err) {
-//       console.error('Error fetching chat messages:', err);
-//       res.status(500).json({ error: 'Failed to fetch messages' });
-//     }
-// });
   
 // Route to fetch chat messages filtered by streamer name (userId is optional)
 router.get('/get-chat-messages', async (req, res) => {
@@ -169,6 +148,5 @@ router.get('/get-user-version', async (req, res) => {
       res.status(500).json({ error: 'Failed to retrieve user version' });
     }
 });
-
 
 module.exports = router;

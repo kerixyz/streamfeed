@@ -34,6 +34,13 @@ const Home = () => {
         }),
       });
 
+      console.log({
+        streamerName,
+        feedbackFromViewers,
+        feedbackFromExternal,
+      });
+      
+
       if (response.ok) {
         const data = await response.json();
         setSessionLink(data.link);

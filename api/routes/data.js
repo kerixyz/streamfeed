@@ -38,6 +38,8 @@ router.post('/create-session', async (req, res) => {
       'INSERT INTO sessions (streamer_name, token, feedback_from_viewers, feedback_from_external) VALUES ($1, $2, $3, $4)',
       [streamerName, token, feedbackFromViewers, feedbackFromExternal]
     );
+    console.log("Received values:", { streamerName, feedbackFromViewers, feedbackFromExternal });
+
 
     // Send back the unique link for the streamer to access their dashboard
     res.json({

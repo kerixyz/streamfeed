@@ -57,14 +57,30 @@ const Home = () => {
           <p className="text-lg">
             StreamFeed helps you get detailed feedback on your streams. See through your viewers' eyes and make improvements in real-time.
           </p>
+
+          {/* Sign Up to Be a Beta Tester */}
+          <div className="mt-4">
+            <p className="text-gray-700 mb-3">
+              Interested in helping us improve StreamFeed? Join our beta testing program to provide valuable feedback!
+            </p>
+            <a 
+              href="https://docs.google.com/forms/d/e/1FAIpQLSf8vFkBqF4mxBMAkusnMtNrl6yroEUR0z1zViY8aWXv1guVSg/viewform" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500 transition"
+            >
+              Sign Up To Be a Beta Tester
+            </a>
+          </div>
         </div>
 
         {/* Right Side: Placeholder for sample report */}
         <div className="md:w-1/2 flex justify-center">
-          <div className="w-80 h-60 bg-gray-200 flex items-center justify-center rounded-md">
-            <span className="text-gray-500">[Sample Report Placeholder]</span>
+          <div className="bg-gray-200 flex items-center justify-center rounded-md overflow-hidden">
+            <img src="/samplereport.png" alt="Sample Report" className="w-full h-auto rounded-md" />
           </div>
         </div>
+
       </section>
       
       {/* Second Section */}

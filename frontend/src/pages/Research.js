@@ -37,17 +37,6 @@ const Research = () => {
         </div>
       </section>
 
-      {/* How Feedback with Agents Works */}
-      <section className="w-full max-w-4xl mb-12">
-        <h2 className="text-3xl font-semibold mb-6">How Feedback with Agents Works</h2>
-        <p className="text-gray-700 mb-4">
-          AI agents analyze viewer responses to highlight patterns, identify areas of improvement, and summarize key insights. It’s like having a co-pilot who understands feedback for you!
-        </p>
-        <div className="w-full bg-gray-200 flex items-center justify-center rounded-md py-10">
-          <span className="text-gray-500">[Visual Placeholder for Feedback with Agents]</span>
-        </div>
-      </section>
-
       {/* Learn More Section */}
       <section className="w-full max-w-4xl mb-12">
         <h2 className="text-3xl font-semibold mb-6">Want to Learn More?</h2>

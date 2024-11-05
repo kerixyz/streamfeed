@@ -120,7 +120,6 @@ const DashboardView = ({ streamer }) => {
 
       {activeTab === 'external' && (
         <section className="w-full max-w-5xl mb-6">
-          <h3 className="text-2xl font-semibold mb-4 text-center">External Feedback</h3>
           <p>External feedback content will go here (coming soon).</p>
         </section>
       )}

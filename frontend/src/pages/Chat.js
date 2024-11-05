@@ -15,6 +15,7 @@ const Chat = () => {
   const [userId, setUserId] = useState('');
   const [isStreamer, setIsStreamer] = useState(false);
   const [error, setError] = useState(null);
+  const [userVersion, setUserVersion] = useState('adaptive'); // Default to 'adaptive' or set logic for assigning version
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -76,18 +77,8 @@ const Chat = () => {
       setUserId(generatedUserId);
       localStorage.setItem('userId', generatedUserId);
 
-      // Save the user version and start chat history
-      await saveUserVersion(generatedUserId, 'adaptive');
+      // Start chat history
       loadChatHistory(generatedUserId);
-    }
-  };
-
-  // Save user version to the backend
-  const saveUserVersion = async (id, version) => {
-    try {
-      await axios.post(`${BASE_URL}/save-user-version`, { userId: id, version });
-    } catch (err) {
-      console.error('Error saving user version:', err);
     }
   };
 
@@ -104,6 +95,7 @@ const Chat = () => {
         streamerName: streamer,
         message: input,
         role: 'user',
+        version: userVersion // Include user version with each message
       });
   
       // Get the response from the chatbot API
@@ -122,6 +114,7 @@ const Chat = () => {
           streamerName: streamer,
           message: response.data.reply,
           role: 'bot',
+          version: userVersion // Include user version with bot messages as well
         });
       } else {
         console.error('Unexpected response structure:', response.data);
@@ -208,7 +201,6 @@ const Chat = () => {
       )}
     </div>
   );
-  
 };
 
 export default Chat;

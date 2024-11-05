@@ -39,6 +39,7 @@ const DashboardView = ({ streamer }) => {
       });
       const userMessages = response.data.messages.filter(msg => msg.role === 'user');
       setChatMessages(userMessages);
+      console.log('Fetched chat messages:', userMessages);
     } catch (error) {
       console.error('Error fetching chat messages:', error);
     }

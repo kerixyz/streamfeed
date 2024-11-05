@@ -208,6 +208,7 @@ async function countUniqueUsers(streamerName) {
   
     try {
       const uniqueUserCount = await countUniqueUsers(streamerName);
+      console.log("Unique user count:", uniqueUserCount);
       if (uniqueUserCount < 5) {
         console.log(`Not enough unique users (${uniqueUserCount}) to generate summaries for ${streamerName}`);
         return res.status(200).json({ message: 'Not enough unique users for summary generation yet.' });

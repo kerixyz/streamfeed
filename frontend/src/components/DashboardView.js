@@ -82,7 +82,7 @@ const DashboardView = ({ streamer }) => {
       {activeTab === 'viewer' && (
         <section className="w-full max-w-5xl mb-6">
           {chatMessages.length === 0 ? (
-            <div className="p-4 rounded-lg shadow-md text-center">
+            <div className="p-4 rounded-lg text-center">
               <p>No feedback yet.</p>
               <p>Share this link with your viewers to start gathering feedback:</p>
               <a
@@ -96,7 +96,7 @@ const DashboardView = ({ streamer }) => {
 
               <p>Once youre messages arrive, your dashboard could look like this </p>
 
-              {/* Top-Level Summaries */}
+              Top-Level Summaries
                 <section className="w-full max-w-5xl mb-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Why Viewers Watch */}

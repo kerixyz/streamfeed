@@ -4,13 +4,13 @@ import axios from 'axios';
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
 
 const DashboardView = ({ streamer }) => {
-  const [activeTab, setActiveTab] = useState('viewer'); // Track active tab
+  const [activeTab, setActiveTab] = useState('viewer');
   const [chatMessages, setChatMessages] = useState([]);
   const [topSummaries, setTopSummaries] = useState({
-    why_viewers_watch: 'Loading...',  
+    why_viewers_watch: 'Loading...',
     how_to_improve: 'Loading...',
   });
-  const [categorySummaries, setCategorySummaries] = useState({}); // Store category summaries
+  const [categorySummaries, setCategorySummaries] = useState({});
 
   useEffect(() => {
     if (streamer) {
@@ -24,6 +24,7 @@ const DashboardView = ({ streamer }) => {
       const response = await axios.get(`${BASE_URL}/get-chat-summaries`, {
         params: { streamerName: streamer },
       });
+      console.log('Fetched summaries:', response.data);
       setTopSummaries(response.data.topSummaries || {});
       setCategorySummaries(response.data.categorySummaries || {});
     } catch (error) {
@@ -43,11 +44,13 @@ const DashboardView = ({ streamer }) => {
     }
   };
 
+  console.log('Top summaries:', topSummaries);
+  console.log('Category summaries:', categorySummaries);
+
   return (
     <div className="min-h-screen flex flex-col items-center py-8 px-4 bg-gray-50">
       <h2 className="text-3xl font-semibold mb-4 text-center">Streamer Dashboard</h2>
 
-      {/* Tab Navigation */}
       <div className="flex mb-4">
         <button 
           className={`px-4 py-2 ${activeTab === 'viewer' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
@@ -63,7 +66,6 @@ const DashboardView = ({ streamer }) => {
         </button>
       </div>
 
-      {/* Viewer Feedback Tab */}
       {activeTab === 'viewer' && (
         <section className="w-full max-w-5xl mb-6">
           {chatMessages.length === 0 ? (
@@ -81,7 +83,6 @@ const DashboardView = ({ streamer }) => {
             </div>
           ) : (
             <>
-              {/* Top-Level Summaries */}
               <section className="w-full max-w-5xl mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#56e8ad' }}>
@@ -95,7 +96,6 @@ const DashboardView = ({ streamer }) => {
                 </div>
               </section>
 
-              {/* Category Summaries */}
               <section className="w-full max-w-5xl mb-6">
                 <h3 className="text-2xl font-semibold mb-4 text-center">Feedback Summaries by Category</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -117,7 +117,6 @@ const DashboardView = ({ streamer }) => {
         </section>
       )}
 
-      {/* External Feedback Tab */}
       {activeTab === 'external' && (
         <section className="w-full max-w-5xl mb-6">
           <h3 className="text-2xl font-semibold mb-4 text-center">External Feedback</h3>

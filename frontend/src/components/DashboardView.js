@@ -78,90 +78,129 @@ const DashboardView = ({ streamer }) => {
         </button>
       </div>
 
-      {/* Top-Level Summaries */}
-      <section className="w-full max-w-5xl mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Why Viewers Watch */}
-          <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#56e8ad' }}>
-            <h4 className="text-xl font-semibold mb-1">Why Your Viewers Watch You</h4>
-            <p className="text-base text-gray-700 mb-2">
-              {topSummaries.why_viewers_watch}
-            </p>
+      {/* Viewer Feedback Tab */}
+      {activeTab === 'viewer' && (
+        <section className="w-full max-w-5xl mb-6">
+          <h3 className="text-2xl font-semibold mb-4 text-center">Viewer Feedback</h3>
+          {chatMessages.length === 0 ? (
+            <div className="p-4 bg-yellow-100 rounded-lg shadow-md text-center">
+              <p>No feedback yet.</p>
+              <p>Share this link with your viewers to start gathering feedback:</p>
+              <a
+                href={`/chat/${streamer}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline"
+              >
+                {`/chat/${streamer}`}
+              </a>
 
-            <p className="text-sm italic text-gray-500"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent scelerisque mauris cursus interdum pretium. Donec sed odio imperdiet, ultrices diam gravida, sodales dolor.</p>
-          </div>
+              <p>Once youre messages arrive, your dashboard could look like this </p>
 
-          {/* How You Can Improve */}
-          <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#ff8280' }}>
-            <h4 className="text-xl font-semibold mb-1">How You Can Improve</h4>
-            <p className="text-base text-gray-700 mb-2">
-              {topSummaries.how_to_improve}
-            </p>
+              {/* Top-Level Summaries */}
+                <section className="w-full max-w-5xl mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Why Viewers Watch */}
+                    <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#56e8ad' }}>
+                        <h4 className="text-xl font-semibold mb-1">Why Your Viewers Watch You</h4>
+                        <p className="text-base text-gray-700 mb-2">
+                        {topSummaries.why_viewers_watch}
+                        </p>
+                        <p className="text-sm italic text-gray-500"> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    </div>
 
-            <p className="text-sm italic text-gray-500"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent scelerisque mauris cursus interdum pretium. Donec sed odio imperdiet, ultrices diam gravida, sodales dolor.</p>
-          </div>
-        </div>
-      </section>
+                    {/* How You Can Improve */}
+                    <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#ff8280' }}>
+                        <h4 className="text-xl font-semibold mb-1">How You Can Improve</h4>
+                        <p className="text-base text-gray-700 mb-2">
+                        {topSummaries.how_to_improve}
+                        </p>
+                        <p className="text-sm italic text-gray-500"> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    </div>
+                    </div>
+                </section>
+                
+                {/* Feedback Summaries */}
+                {/* ... existing feedback summary sections go here ... */}
+                <section className="w-full max-w-5xl mb-6">
+                    <h3 className="text-2xl font-semibold mb-4 text-center">Feedback Summaries</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        
+                        {/* Content Production */}
+                        <div className="p-4 bg-yellow-50 rounded-lg shadow-md">
+                        <h4 className="text-lg font-semibold mb-2">Content Production</h4>
+                        <p className="text-sm font-semibold mb-1">TL;DR: High-level actionable feedback</p>
+                        <ul className="list-disc ml-4 text-sm text-gray-700 space-y-1">
+                            <li>“Stream quality could be improved for a better viewing experience.”</li>
+                            <li>“Audio quality is great—your mic setup is working well.”</li>
+                            <li>“Your RuneScape and Minecraft streams are especially fun and engaging.”</li>
+                        </ul>
+                        </div>
+
+                        {/* Community Management */}
+                        <div className="p-4 bg-purple-50 rounded-lg shadow-md">
+                        <h4 className="text-lg font-semibold mb-2">Community Management</h4>
+                        <p className="text-sm font-semibold mb-1">TL;DR: High-level actionable feedback</p>
+                        <ul className="list-disc ml-4 text-sm text-gray-700 space-y-1">
+                            <li>“Try to engage more with the chat, especially when you’re on call with friends.”</li>
+                            <li>“Consider adding more moderators to manage chat and control spammers.”</li>
+                            <li>“A consistent schedule could help in retaining regular viewers.”</li>
+                        </ul>
+                        </div>
+
+                        {/* Marketing Strategies */}
+                        <div className="p-4 bg-blue-50 rounded-lg shadow-md">
+                        <h4 className="text-lg font-semibold mb-2">Marketing Strategies</h4>
+                        <p className="text-sm font-semibold mb-1">TL;DR: High-level actionable feedback</p>
+                        <ul className="list-disc ml-4 text-sm text-gray-700 space-y-1">
+                            <li>“Promote your unique streaming style on social media to attract new viewers.”</li>
+                            <li>“Collaborating with friends while streaming could bring in more engaged audiences.”</li>
+                            <li>“Consider sharing clips from your fun moments in RuneScape and Minecraft to build interest.”</li>
+                        </ul>
+                        </div>
+                    </div>
+                </section> 
+
+                {/* Stats Placeholder */}
+                <section className="w-full max-w-5xl mb-10">
+                    <h3 className="text-2xl font-semibold mb-4 text-center">StreamFeed Response Stats</h3>
+                    <div className="p-6 bg-white rounded-lg shadow-md flex flex-col md:flex-row items-center justify-around">
+                    <div className="text-center mb-4 md:mb-0">
+                        <h4 className="text-xl font-semibold text-gray-800">Total Responses</h4>
+                        <p className="text-lg font-semibold text-green-600">8</p>
+                    </div>
+                    <div className="text-center mb-4 md:mb-0">
+                        <h4 className="text-xl font-semibold text-gray-800">Positive Feedback</h4>
+                        <p className="text-lg font-semibold text-blue-600">75%</p>
+                    </div>
+                    <div className="text-center">
+                        <h4 className="text-xl font-semibold text-gray-800">Improvement Suggestions</h4>
+                        <p className="text-lg font-semibold text-red-600">25%</p>
+                    </div>
+                    </div>
+                </section>
+            </div>
+          ) : (
+            <div className="feedback-list">
+              {chatMessages.map((message, index) => (
+                <div key={index} className="p-2 mb-2 bg-white rounded-lg shadow">
+                  <p>{message.message}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* External Feedback Tab */}
+      {activeTab === 'external' && (
+        <section className="w-full max-w-5xl mb-6">
+          <h3 className="text-2xl font-semibold mb-4 text-center">External Feedback</h3>
+          <p>External feedback content will go here (coming soon).</p>
+        </section>
+      )}
       
-
-      {/* Feedback Summaries */}
-      <section className="w-full max-w-5xl mb-6">
-  <h3 className="text-2xl font-semibold mb-4 text-center">Feedback Summaries</h3>
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-    
-    {/* Content Production */}
-    <div className="p-4 bg-yellow-50 rounded-lg shadow-md">
-      <h4 className="text-lg font-semibold mb-2">Content Production</h4>
-      <p className="text-sm font-semibold mb-1">TL;DR: High-level actionable feedback</p>
-      <ul className="list-disc ml-4 text-sm text-gray-700 space-y-1">
-        <li>“Stream quality could be improved for a better viewing experience.”</li>
-        <li>“Audio quality is great—your mic setup is working well.”</li>
-        <li>“Your RuneScape and Minecraft streams are especially fun and engaging.”</li>
-      </ul>
-    </div>
-
-    {/* Community Management */}
-    <div className="p-4 bg-purple-50 rounded-lg shadow-md">
-      <h4 className="text-lg font-semibold mb-2">Community Management</h4>
-      <p className="text-sm font-semibold mb-1">TL;DR: High-level actionable feedback</p>
-      <ul className="list-disc ml-4 text-sm text-gray-700 space-y-1">
-        <li>“Try to engage more with the chat, especially when you’re on call with friends.”</li>
-        <li>“Consider adding more moderators to manage chat and control spammers.”</li>
-        <li>“A consistent schedule could help in retaining regular viewers.”</li>
-      </ul>
-    </div>
-
-    {/* Marketing Strategies */}
-    <div className="p-4 bg-blue-50 rounded-lg shadow-md">
-      <h4 className="text-lg font-semibold mb-2">Marketing Strategies</h4>
-      <p className="text-sm font-semibold mb-1">TL;DR: High-level actionable feedback</p>
-      <ul className="list-disc ml-4 text-sm text-gray-700 space-y-1">
-        <li>“Promote your unique streaming style on social media to attract new viewers.”</li>
-        <li>“Collaborating with friends while streaming could bring in more engaged audiences.”</li>
-        <li>“Consider sharing clips from your fun moments in RuneScape and Minecraft to build interest.”</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-      {/* Stats Placeholder */}
-      <section className="w-full max-w-5xl mb-10">
-        <h3 className="text-2xl font-semibold mb-4 text-center">StreamFeed Response Stats</h3>
-        <div className="p-6 bg-white rounded-lg shadow-md flex flex-col md:flex-row items-center justify-around">
-          <div className="text-center mb-4 md:mb-0">
-            <h4 className="text-xl font-semibold text-gray-800">Total Responses</h4>
-            <p className="text-lg font-semibold text-green-600">8</p>
-          </div>
-          <div className="text-center mb-4 md:mb-0">
-            <h4 className="text-xl font-semibold text-gray-800">Positive Feedback</h4>
-            <p className="text-lg font-semibold text-blue-600">75%</p>
-          </div>
-          <div className="text-center">
-            <h4 className="text-xl font-semibold text-gray-800">Improvement Suggestions</h4>
-            <p className="text-lg font-semibold text-red-600">25%</p>
-          </div>
-        </div>
-      </section>
+      
     </div>
   );
 };

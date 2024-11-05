@@ -72,22 +72,27 @@ router.get('/verify-dashboard-access', async (req, res) => {
   }
 });
 
-// Route to save a chat message with category and version
+// Route to save a chat message with version info
 router.post('/save-chat-message', async (req, res) => {
-  const { userId, streamerName, message, role, category, version } = req.body;
+    const { userId, streamerName, message, role, version } = req.body;
 
-  try {
-    // Insert the message into the chat_messages table
-    await pool.query(
-      'INSERT INTO chat_messages (user_id, streamer_name, message, role, category, version, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW())',
-      [userId, streamerName, message, role, category, version]
-    );
-    res.json({ success: true });
-  } catch (err) {
-    console.error('Error saving message to database:', err);
-    res.status(500).json({ error: 'Failed to save message' });
-  }
+    try {
+        console.log("Saving chat message with data:", { userId, streamerName, message, role, version });
+
+        const query = `
+            INSERT INTO chat_messages (user_id, streamer_name, message, role, version, created_at)
+            VALUES ($1, $2, $3, $4, $5, NOW())
+        `;
+        const values = [userId, streamerName, message, role, version];
+
+        await pool.query(query, values);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Error saving message to database:', err);
+        res.status(500).json({ error: 'Failed to save message' });
+    }
 });
+
 
 // Route to fetch chat messages filtered by streamer name (userId is optional)
 router.get('/get-chat-messages', async (req, res) => {

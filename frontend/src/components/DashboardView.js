@@ -81,9 +81,8 @@ const DashboardView = ({ streamer }) => {
       {/* Viewer Feedback Tab */}
       {activeTab === 'viewer' && (
         <section className="w-full max-w-5xl mb-6">
-          <h3 className="text-2xl font-semibold mb-4 text-center">Viewer Feedback</h3>
           {chatMessages.length === 0 ? (
-            <div className="p-4 bg-yellow-100 rounded-lg shadow-md text-center">
+            <div className="p-4 rounded-lg shadow-md text-center">
               <p>No feedback yet.</p>
               <p>Share this link with your viewers to start gathering feedback:</p>
               <a
@@ -92,7 +91,7 @@ const DashboardView = ({ streamer }) => {
                 rel="noopener noreferrer"
                 className="text-blue-600 underline"
               >
-                {`/chat/${streamer}`}
+                {`https://www.streamfeed.xyz/chat/${streamer}`}
               </a>
 
               <p>Once youre messages arrive, your dashboard could look like this </p>
@@ -198,6 +197,8 @@ const DashboardView = ({ streamer }) => {
           <h3 className="text-2xl font-semibold mb-4 text-center">External Feedback</h3>
           <p>External feedback content will go here (coming soon).</p>
         </section>
+
+        
       )}
       
       

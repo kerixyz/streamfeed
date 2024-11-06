@@ -179,7 +179,7 @@ async function generateHighLevelSummaries(messages) {
     for (const [key, prompt] of Object.entries(prompts)) {
         try {
             const response = await openai.chat.completions.create({
-                model: 'gpt-4',
+                model: 'gpt-4o',
                 messages: [{ role: 'user', content: prompt }],
                 max_tokens: 150,
                 temperature: 0.7,
@@ -206,7 +206,7 @@ async function categorizeFeedbackWithOpenAI(messages) {
         const prompt = `Classify the following feedback into one of these categories: content production, community management, or marketing strategies. Feedback: "${message}"`;
         try {
             const response = await openai.chat.completions.create({
-                model: 'gpt-4',
+                model: 'gpt-4o',
                 messages: [{ role: 'user', content: prompt }],
                 max_tokens: 50,
                 temperature: 0.3,

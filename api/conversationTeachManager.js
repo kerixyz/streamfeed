@@ -11,7 +11,7 @@ async function generateTeachInitialQ(category, feedbackType, openai) {
                     "What do you think are the ${feedbackType} of the ${category} in the current course?"`;
 
     const response = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4o',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 100,
         temperature: 0.7,
@@ -27,7 +27,7 @@ async function generateTeachClarifyingQ(userResponse, feedbackType, openai) {
                     ${feedbackType === 'strengths' ? 'justifiable' : 'actionable'}, in a friendly tone.`;
 
     const clarificationResponse = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4o',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 100,
         temperature: 0.7,
@@ -98,7 +98,7 @@ async function handleAdaptiveTeachVersion(userId, message, openai) {
     // Call OpenAI's ChatGPT for response
     try {
         const response = await openai.chat.completions.create({
-            model: 'gpt-4',
+            model: 'gpt-4o',
             messages: userState.messages,
             max_tokens: 200,
             temperature: 0.7,

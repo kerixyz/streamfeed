@@ -81,7 +81,7 @@ async function generateHybridInitialQ(category, feedbackType, streamerName, open
                     "What do you think are ${streamerName}'s ${feedbackType} in ${category}?"`;
 
     const response = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4o',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 100,
         temperature: 0.7,
@@ -97,7 +97,7 @@ async function generateHybridClarifyingQ(response, feedbackType, openai) {
                     ${feedbackType === 'strengths' ? 'justifiable' : 'actionable'}, in a friendly tone.`;
 
     const clarificationResponse = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4o',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 100,
         temperature: 0.7,
@@ -120,7 +120,7 @@ async function assessHybridConstructiveness(message, feedbackType, openai) {
     `;
   
     const response = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o',
       messages: [{ role: 'user', content: constructivenessPrompt }],
       max_tokens: 200,
       temperature: 0.7,
@@ -310,7 +310,7 @@ async function handleAdaptiveVersion(userId, message, openai) {
   // Call OpenAI's ChatGPT for response
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o',
       messages: userState.messages,
       max_tokens: 200,
       temperature: 0.7,

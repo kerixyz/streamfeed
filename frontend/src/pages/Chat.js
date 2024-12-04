@@ -128,7 +128,7 @@ const Chat = () => {
   
 
   return (
-    <div className="h-screen flex flex-col items-center overflow-hidden bg-white">
+    <div className="bg-white">
     {/* Streamer Dashboard */}
       {isStreamer && <DashboardView streamer={streamer} />}
   

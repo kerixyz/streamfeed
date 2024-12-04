@@ -162,7 +162,8 @@ const Chat = () => {
       {/* Chat Box */}
       {userId && (
         <>
-          <h2 className="text-xl font-semibold mb-2">Thanks for giving feedback to {streamer}</h2>
+          <h3 className="text-xl font-semibold mb-2">Hello {userId}!</h3>
+          <p>Thanks for giving feedback to {streamerName}. Your thoughts are valuable and will help improve their content. To get started, simply say 'hello' and start sharing your feedback!</p>
           <div className="flex flex-col w-full max-w-4xl md:max-w-2xl lg:max-w-lg bg-gray-100 rounded-lg shadow-md overflow-hidden">
             {/* Messages Container */}
             <div className="flex-grow h-96 md:h-80 overflow-auto p-4">

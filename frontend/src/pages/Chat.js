@@ -128,8 +128,8 @@ const Chat = () => {
   
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-10 px-4 md:px-6 bg-white">
-      {/* Streamer Dashboard */}
+    <div className="h-screen flex flex-col items-center overflow-hidden px-4 md:px-6 bg-white">
+    {/* Streamer Dashboard */}
       {isStreamer && <DashboardView streamer={streamer} />}
   
       {/* Error Message */}
@@ -162,7 +162,7 @@ const Chat = () => {
       {/* Chat Box */}
       {userId && (
         <>
-          <h3 className="text-xl font-semibold mb-2">Hello {userId}!</h3>
+          <h3 className="text-xl font-semibold mb-2">Hello {userName}!</h3>
           <p>Thanks for giving feedback to {streamer}. Your thoughts are valuable and will help improve their content. To get started, simply say 'hello' and start sharing your feedback!</p>
           <div className="flex flex-col w-full max-w-4xl md:max-w-2xl lg:max-w-lg bg-gray-100 rounded-lg shadow-md overflow-hidden">
             {/* Messages Container */}

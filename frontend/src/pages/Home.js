@@ -110,7 +110,7 @@ const Home = () => {
               onChange={() => setFeedbackFromViewers(!feedbackFromViewers)}
               className="mr-2"
             />
-            Get feedback from your viewers
+            liveack from your viewers
           </label>
           <label className="flex items-center">
             <input
@@ -120,7 +120,7 @@ const Home = () => {
               className="mr-2"
             />
             {/* (Coming Soon ) */}
-            Get feedback from external users
+            liveack from external users
           </label>
         </div>
 
@@ -190,7 +190,7 @@ const Home = () => {
             </div>
             <h3 className="text-xl font-semibold mb-2">Watch Your Dashboard Update</h3>
             <p className="text-center text-gray-700">
-              As your viewers submit feedback, see your dashboard update with real-time insights.
+              As your viewers submit feedback, see your dashboard update the next day!
             </p>
           </div>
         </div>

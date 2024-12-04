@@ -2,3 +2,4 @@
 frontend/.env
 api/.env
 .env
+*.csv

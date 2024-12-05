@@ -197,6 +197,12 @@ const Chat = () => {
               </button>
             </div>
           </div>
+          {/* Footer Section */}
+          <footer className="py-6 px-6 bg-white text-gray-600">
+            <p>This is an ongoing research project at the University of Washington. By clicking any of the links above, you acknowledge that your feedback may be used for ongoing research to improve the StreamFeed platform. We collect and analyze feedback to better understand how streamers engage with their audiences. Your participation is voluntary, and all data will be anonymized to ensure your privacy.</p>
+            <br/>
+            <p>For questions, comments, or feedback, please contact: kmallari[at]uw[dot]edu</p>
+          </footer>
         </>
       )}
     </div>

@@ -157,7 +157,7 @@ async function handleMessage(userId, message, openai, streamerName) {
     // Handle end of conversation
     if (message.toLowerCase() === 'end') {
       delete conversationState[userId];
-      return 'Thank you for using Evalubot! If you need more assistance, feel free to start a new conversation.';
+      return 'Thank you for using the bot! If you need more assistance, feel free to start a new conversation.';
     }
   
     // Handle user confirmation
@@ -331,33 +331,34 @@ function createAdaptivePrompt(streamerName) {
     return [
       {
         role: 'system',
-        content: `You are Evalubot, a chatbot that gathers feedback about streamers.
+        content: `You are a chatbot that gathers feedback about streamers.
                 Guide users step-by-step across three categories: marketing strategies, content production, and community management.
 
                     Conversational Flow:
                         Ask one question at a time and wait for the user's response before moving to the next question.
+                        After each response:
+                            Acknowledge the input with a brief, friendly comment like:
+                            "Thank you for your input! That's very helpful."
+                            Ask the next question in the same message:
+                            "Now, let's move on to the next topic. What do you think about the streamer's content production? Can you share one strength?"
                         Keep the conversation focused on strengths and improvements, ensuring that the feedback is:
                             Specific: The response should have at least 5 characters.
                             Justifiable: For strengths, users should explain why it's a strength.
                             Actionable: For improvements, users should suggest how the streamer could improve.
 
                     Handling Responses:
-                        If a response is overly negative (e.g., uses words like "terrible", "useless"), prompt with:
-                        "That's pretty negative, could you rephrase that?"
-                        If a response is too vague (e.g., "okay", "fine"), prompt with:
-                        "That's not really helpful, could you rephrase that?"
+                        If a response is overly negative (e.g., uses words like "terrible", "useless") ask them to rephrase.
+                        If a response is too vague (e.g., "okay", "fine"), ask them to rephrase.
                         If a response does not meet the criteria for constructiveness, ask for more details or clarification before proceeding.
 
                     Redirecting Off-Topic Responses:
-                        If the user tries to deviate from the topic or discusses unrelated matters, respond with:
-                        "Let's stay focused on providing feedback about streamers. Could you share your thoughts on [current category or question]?"
+                        If the user tries to deviate from the topic or discusses unrelated matters, bring the conversation back to getting feedback for their streamer.
 
                     Ensuring Sufficient Data:
                         Continue asking questions or prompting for additional details within each category until there is enough data to process.
                         "Enough data" is defined as:
                             At least one strength and one area for improvement for each category (marketing strategies, content production, and community management).
-                        If the user provides incomplete feedback, encourage them to expand:
-                        "It seems like we haven't covered enough strengths or improvements for this category. Could you share more?"
+                        If the user provides incomplete feedback, encourage them to expand.
 
                     By maintaining a focused and iterative approach, your goal is to ensure that the feedback collected is thorough, constructive, and relevant to the three categories.`
       }

@@ -128,7 +128,7 @@ const Chat = () => {
   
 
   return (
-    <div className="bg-white">
+    <div className="py-6 px-6 bg-white">
     {/* Streamer Dashboard */}
       {isStreamer && <DashboardView streamer={streamer} />}
   

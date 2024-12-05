@@ -110,7 +110,7 @@ const Home = () => {
               onChange={() => setFeedbackFromViewers(!feedbackFromViewers)}
               className="mr-2"
             />
-            liveack from your viewers
+            Feedback from your viewers
           </label>
           <label className="flex items-center">
             <input
@@ -120,7 +120,7 @@ const Home = () => {
               className="mr-2"
             />
             {/* (Coming Soon ) */}
-            liveack from external users
+            Feedback from external users or potential newcomers
           </label>
         </div>
 

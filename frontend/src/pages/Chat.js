@@ -128,8 +128,8 @@ const Chat = () => {
   
 
   return (
-    <div className="py-6 px-6 bg-white">
-    {/* Streamer Dashboard */}
+      <div className="min-h-screen flex flex-col items-center py-10 px-4 md:px-6 bg-white">
+      {/* Streamer Dashboard */}
       {isStreamer && <DashboardView streamer={streamer} />}
   
       {/* Error Message */}

@@ -1,3 +1,14 @@
+const express = require('express');
+const cors = require('cors');
+const OpenAI = require('openai');
+const path = require('path');
+const bodyParser = require('body-parser');
+const pool = require('./db'); 
+const app = express();
+
+
+require('dotenv').config();
+
 async function generateSummaries(streamerName) {
     try {
       console.log(`Starting summary generation for streamer: ${streamerName}`);
@@ -7,18 +18,19 @@ async function generateSummaries(streamerName) {
         'SELECT message FROM chat_messages WHERE streamer_name ILIKE $1',
         [streamerName]
       );
+  
       const messages = result.rows.map(row => row.message).join('\n');
   
       if (!messages) {
         console.log('No messages found for summarization.');
-        return;
+        return { error: 'No messages available for summarization.' };
       }
   
       console.log(`Fetched messages for streamer: ${streamerName}`);
   
       // Generate summaries
       const response = await openai.completions.create({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         prompt: `
           The following is a conversation between a bot and a user. The bot asks targeted questions to gather feedback about a livestreamer. The user's responses are feedback about the streamer's content, engagement, and overall performance. Your task is to analyze this exchange and summarize the feedback into five categories.
       
@@ -95,3 +107,4 @@ async function generateSummaries(streamerName) {
     }
   }
   
+  module.exports = { generateSummaries };

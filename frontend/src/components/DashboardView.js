@@ -24,7 +24,7 @@ const DashboardView = ({ streamer }) => {
       const response = await axios.get(`${BASE_URL}/get-chat-summaries`, {
         params: { streamerName: streamer },
       });
-      console.log('Fetched summaries:', response.data);
+    //   console.log('Fetched summaries:', response.data);
       setTopSummaries(response.data.topSummaries || {});
       setCategorySummaries(response.data.categorySummaries || {});
     } catch (error) {
@@ -39,14 +39,14 @@ const DashboardView = ({ streamer }) => {
       });
       const userMessages = response.data.messages.filter(msg => msg.role === 'user');
       setChatMessages(userMessages);
-      console.log('Fetched chat messages:', userMessages);
+    //   console.log('Fetched chat messages:', userMessages);
     } catch (error) {
       console.error('Error fetching chat messages:', error);
     }
   };
 
-  console.log('Top summaries:', topSummaries);
-  console.log('Category summaries:', categorySummaries);
+//   console.log('Top summaries:', topSummaries);
+//   console.log('Category summaries:', categorySummaries);
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 px-4 bg-gray-50">

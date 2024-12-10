@@ -10,7 +10,7 @@ const Home = () => {
   const [feedbackFromViewers, setFeedbackFromViewers] = useState(false);
   const [feedbackFromExternal, setFeedbackFromExternal] = useState(false);
 
-  console.log('API Base URL:', process.env.REACT_APP_API_BASE_URL);
+//   console.log('API Base URL:', process.env.REACT_APP_API_BASE_URL);
 
   // Function to handle session creation
   const createSession = async () => {
@@ -32,11 +32,11 @@ const Home = () => {
         }),
       });
   
-      console.log({
-        streamerName,
-        feedbackFromViewers,
-        feedbackFromExternal,
-      });
+    //   console.log({
+    //     streamerName,
+    //     feedbackFromViewers,
+    //     feedbackFromExternal,
+    //   });
       
   
       if (response.ok) {

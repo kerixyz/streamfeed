@@ -42,7 +42,7 @@ app.use((req, res, next) => {
 
     res.setHeader(
         'Content-Security-Policy',
-        "default-src 'self'; img-src 'self' https://www.streamfeed.xyz; script-src 'self'; style-src 'self';"
+        "default-src 'self'; img-src 'self' https://www.streamfeed.xyz; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
     );
     next();
 });

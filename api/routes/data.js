@@ -4,6 +4,7 @@ const pool = require('../db');
 const crypto = require('crypto');
 
 require('dotenv').config();
+const { generateSummaries } = require('../summaryManager');
 
 // Temporary storage
 let streamers = {};
@@ -125,13 +126,23 @@ router.get('/get-chat-summaries', async (req, res) => {
     }
   
     try {
+      // Check if summaries exist
       const result = await pool.query(
         'SELECT why_viewers_watch, how_to_improve, content_production, community_management, marketing_strategy FROM chat_summaries WHERE streamer_name = $1',
         [streamerName]
       );
   
       if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'No summaries found for the given streamer.' });
+        console.log(`No summaries found for streamer: ${streamerName}. Triggering summary generation.`);
+        
+        // Trigger summary generation
+        const summaries = await generateSummaries(streamerName);
+  
+        return res.json({
+          success: true,
+          summaries,
+          message: 'Summaries generated successfully.',
+        });
       }
   
       const summaries = result.rows[0];
@@ -140,7 +151,7 @@ router.get('/get-chat-summaries', async (req, res) => {
         summaries,
       });
     } catch (error) {
-      console.error('Error fetching summaries:', error);
+      console.error('Error fetching or generating summaries:', error);
       res.status(500).json({ error: 'An error occurred while fetching summaries.' });
     }
   });

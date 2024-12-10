@@ -118,7 +118,6 @@ router.get('/get-chat-messages', async (req, res) => {
   }
 });
 
-
 router.get('/get-chat-summaries', async (req, res) => {
     const { streamerName } = req.query;
   
@@ -154,9 +153,13 @@ router.get('/get-chat-summaries', async (req, res) => {
         summaries,
       });
     } catch (error) {
-      console.error('Error fetching or generating summaries:', error);
-      res.status(500).json({ error: 'An error occurred while fetching or generating summaries.' });
-    }
+        console.error('Error fetching or generating summaries:', {
+          message: error.message,
+          stack: error.stack,
+          context: { streamerName },
+        });
+        res.status(500).json({ error: 'An error occurred while fetching or generating summaries.' });
+      }
   });
   
   module.exports = router;

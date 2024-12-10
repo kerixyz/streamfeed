@@ -93,7 +93,6 @@ router.post('/save-chat-message', async (req, res) => {
     }
 });
 
-
 // Route to fetch chat messages filtered by streamer name (userId is optional)
 router.get('/get-chat-messages', async (req, res) => {
   const { userId, streamerName } = req.query;
@@ -118,4 +117,32 @@ router.get('/get-chat-messages', async (req, res) => {
   }
 });
 
-module.exports = router;
+router.get('/get-chat-summaries', async (req, res) => {
+    const { streamerName } = req.query;
+  
+    if (!streamerName) {
+      return res.status(400).json({ error: 'Streamer name is required.' });
+    }
+  
+    try {
+      const result = await pool.query(
+        'SELECT why_viewers_watch, how_to_improve, content_production, community_management, marketing_strategy FROM chat_summaries WHERE streamer_name = $1',
+        [streamerName]
+      );
+  
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'No summaries found for the given streamer.' });
+      }
+  
+      const summaries = result.rows[0];
+      res.json({
+        success: true,
+        summaries,
+      });
+    } catch (error) {
+      console.error('Error fetching summaries:', error);
+      res.status(500).json({ error: 'An error occurred while fetching summaries.' });
+    }
+  });
+  
+  module.exports = router;

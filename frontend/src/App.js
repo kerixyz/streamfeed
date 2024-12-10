@@ -9,7 +9,7 @@ import Research from './pages/Research';
 // import Feedback from './pages/Feedback';
 
 function App() {
-  console.log('REACT_APP_API_BASE_URL at build:', process.env.REACT_APP_API_BASE_URL);
+//   console.log('REACT_APP_API_BASE_URL at build:', process.env.REACT_APP_API_BASE_URL);
 
   return (
     <div>

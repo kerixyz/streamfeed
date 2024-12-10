@@ -29,45 +29,42 @@ async function generateSummaries(streamerName) {
   
       console.log(`Fetched ${result.rows.length} messages for streamer: ${streamerName}`);
   
-      // Prepare and send the OpenAI request
       const prompt = `
-        The following is a conversation between a bot and a user. The bot asks targeted questions to gather feedback about a livestreamer. The user's responses are feedback about the streamer's content, engagement, and overall performance. Your task is to analyze this exchange and summarize the feedback into five categories.
-  
-        Categories:
-        1. Why Viewers Watch: Reasons viewers enjoy the streamer.
-        2. How to Improve: Suggestions for the streamer to improve.
-        3. Content Production: Feedback about content quality and creativity.
-        4. Community Management: Feedback about engagement with viewers.
-        5. Marketing Strategy: Insights about promotion and branding.
-  
-        Messages:
-        ${messages}
-  
-        Provide summaries in this format:
-        - Why Viewers Watch:
-        - How to Improve:
-        - Content Production:
-        - Community Management:
-        - Marketing Strategy:
-      `;
-  
-      console.log('Sending prompt to OpenAI:', prompt);
-  
-      const response = await openai.completions.create({
-        model: 'gpt-4',
-        prompt,
-        max_tokens: 1000,
-        temperature: 0.7,
-      });
-  
-      console.log('OpenAI response received:', response);
-  
-      const output = response.choices[0]?.text?.trim();
-      if (!output) {
-        throw new Error('OpenAI returned an empty response.');
-      }
-  
-      console.log('OpenAI output:', output);
+      The following is a conversation between a bot and a user. The bot asks targeted questions to gather feedback about a livestreamer. The user's responses are feedback about the streamer's content, engagement, and overall performance. Summarize the feedback into five categories:
+      1. Why Viewers Watch: Reasons viewers enjoy the streamer.
+      2. How to Improve: Suggestions for the streamer to improve.
+      3. Content Production: Feedback about content quality and creativity.
+      4. Community Management: Feedback about engagement with viewers.
+      5. Marketing Strategy: Insights about promotion and branding.
+      
+      Messages:
+      ${messages.map(m => `${m.role}: ${m.content}`).join('\n')}
+      
+      Provide summaries in this format:
+      - Why Viewers Watch:
+      - How to Improve:
+      - Content Production:
+      - Community Management:
+      - Marketing Strategy:
+    `;
+
+    console.log('Sending prompt to OpenAI:', prompt);
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 1000,
+      temperature: 0.7,
+    });
+
+    console.log('OpenAI response received:', response);
+
+    const output = response.choices[0]?.message?.content?.trim();
+    if (!output) {
+      throw new Error('OpenAI returned an empty response.');
+    }
+
+    console.log('OpenAI output:', output);
   
       // Parse the response into categories
       const categories = output.split('\n');

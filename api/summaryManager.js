@@ -21,15 +21,23 @@ async function generateSummaries(streamerName) {
         [streamerName]
       );
   
-      const messages = result.rows.map(row => row.message).join('\n');
-      if (!messages) {
+      const messages = result.rows.map(row => ({
+        role: row.role, // 'user' or 'assistant'
+        content: row.message,
+      }));
+      
+      if (!messages.length) {
         console.log('No messages found for summarization.');
         return { error: 'No messages available for summarization.' };
       }
       
-      console.log(`Fetched ${result.rows.length} messages for streamer: ${streamerName}`);
-      let messageText = messages.map(m => `${m.role}: ${m.content}`).join('\n');
-  
+      console.log(`Fetched ${messages.length} messages for streamer: ${streamerName}`);
+      
+      // Create message text for the OpenAI prompt
+      const messageText = messages.map(m => `${m.role}: ${m.content}`).join('\n');
+      console.log('Prepared message text for OpenAI:', messageText);
+
+      
       const prompt = `
       The following is a conversation between a bot and a user. The bot asks targeted questions to gather feedback about a livestreamer. The user's responses are feedback about the streamer's content, engagement, and overall performance. Summarize the feedback into five categories:
       1. Why Viewers Watch: Reasons viewers enjoy the streamer.

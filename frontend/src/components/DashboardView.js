@@ -115,7 +115,7 @@ const DashboardView = ({ streamer }) => {
             </div>
           ) : (
             <>
-              <section className="w-full max-w-5xl mb-6">
+                <section className="w-full max-w-5xl mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Why Viewers Watch */}
                     <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#56e8ad' }}>

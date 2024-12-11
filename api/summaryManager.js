@@ -40,14 +40,14 @@ async function generateSummaries(streamerName) {
 
       const prompt = `
         The following is a conversation between a bot and a user. The bot asks targeted questions to gather feedback about a livestreamer. 
-        The user's responses are feedback about the streamer's content, engagement, and overall performance. Summarize the feedback into five categories. 
-        For each category, include direct quotes from the user's responses to support the summary.
+        The user's responses are feedback about the streamer's content, engagement, and overall performance. Summarize the feedback into five categories. For each category, include direct quotes from the user's responses to support the summary.
 
         Messages:
         ${messageText}
 
-        Do not include any surrounding code block markers in your response. 
+        
 
+        Do not include any surrounding code block markers in your response. For each summaries, try to generate at least two sentences long so it is lengthy and rich in information.
         Respond with a valid JSON object in the following format:
 
         {

@@ -11,6 +11,7 @@ const DashboardView = ({ streamer }) => {
     how_to_improve: 'Loading...',
   });
   const [categorySummaries, setCategorySummaries] = useState({});
+  const [quotes, setQuotes] = useState({});
 
   useEffect(() => {
     if (streamer) {
@@ -24,11 +25,32 @@ const DashboardView = ({ streamer }) => {
       const response = await axios.get(`${BASE_URL}/get-chat-summaries`, {
         params: { streamerName: streamer },
       });
-      setTopSummaries(response.data.summaries || {});
+  
+      if (response.data.success) {
+        const summaries = response.data.summaries;
+  
+        // Populate topSummaries and quotes
+        setTopSummaries({
+          why_viewers_watch: summaries.why_viewers_watch || 'No summary available',
+          how_to_improve: summaries.how_to_improve || 'No summary available',
+          content_production: summaries.content_production || 'No summary available',
+          community_management: summaries.community_management || 'No summary available',
+          marketing_strategy: summaries.marketing_strategy || 'No summary available',
+        });
+  
+        setQuotes({
+          why_viewers_watch: summaries.why_viewers_watch_quotes?.split('\n') || [],
+          how_to_improve: summaries.how_to_improve_quotes?.split('\n') || [],
+          content_production: summaries.content_production_quotes?.split('\n') || [],
+          community_management: summaries.community_management_quotes?.split('\n') || [],
+          marketing_strategy: summaries.marketing_strategy_quotes?.split('\n') || [],
+        });
+      }
     } catch (error) {
       console.error('Error fetching summaries:', error);
     }
   };
+  
   
 
   const fetchChatMessages = async () => {
@@ -83,15 +105,28 @@ const DashboardView = ({ streamer }) => {
             </div>
           ) : (
             <>
-              {/* <section className="w-full max-w-5xl mb-6">
+              <section className="w-full max-w-5xl mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Why Viewers Watch */}
                     <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#56e8ad' }}>
                     <h4 className="text-xl font-semibold mb-1">Why Your Viewers Watch You</h4>
-                    <p className="text-base text-gray-700 mb-2">{topSummaries.why_viewers_watch || 'No summary available'}</p>
+                    <p className="text-base text-gray-700 mb-2">{topSummaries.why_viewers_watch}</p>
+                    <ul className="list-disc ml-4">
+                        {quotes.why_viewers_watch.map((quote, index) => (
+                        <li key={index} className="text-sm text-gray-600">"{quote}"</li>
+                        ))}
+                    </ul>
                     </div>
+
+                    {/* How to Improve */}
                     <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#ff8280' }}>
                     <h4 className="text-xl font-semibold mb-1">How You Can Improve</h4>
-                    <p className="text-base text-gray-700 mb-2">{topSummaries.how_to_improve || 'No summary available'}</p>
+                    <p className="text-base text-gray-700 mb-2">{topSummaries.how_to_improve}</p>
+                    <ul className="list-disc ml-4">
+                        {quotes.how_to_improve.map((quote, index) => (
+                        <li key={index} className="text-sm text-gray-600">"{quote}"</li>
+                        ))}
+                    </ul>
                     </div>
                 </div>
                 </section>
@@ -100,17 +135,22 @@ const DashboardView = ({ streamer }) => {
                 <h3 className="text-2xl font-semibold mb-4 text-center">Other Summaries</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
-                    { category: 'Content Production', summary: topSummaries.content_production },
-                    { category: 'Community Management', summary: topSummaries.community_management },
-                    { category: 'Marketing Strategy', summary: topSummaries.marketing_strategy },
-                    ].map(({ category, summary }) => (
+                    { category: 'Content Production', summary: topSummaries.content_production, quotes: quotes.content_production },
+                    { category: 'Community Management', summary: topSummaries.community_management, quotes: quotes.community_management },
+                    { category: 'Marketing Strategy', summary: topSummaries.marketing_strategy, quotes: quotes.marketing_strategy },
+                    ].map(({ category, summary, quotes }) => (
                     <div key={category} className="p-4 bg-gray-100 rounded-lg shadow-md">
                         <h4 className="text-lg font-semibold mb-2">{category}</h4>
-                        <p className="text-base text-gray-700 mb-2">{summary || 'No summary available'}</p>
+                        <p className="text-base text-gray-700 mb-2">{summary}</p>
+                        <ul className="list-disc ml-4">
+                        {quotes.map((quote, index) => (
+                            <li key={index} className="text-sm text-gray-600">"{quote}"</li>
+                        ))}
+                        </ul>
                     </div>
                     ))}
                 </div>
-              </section> */}
+                </section>
 
             </>
           )}

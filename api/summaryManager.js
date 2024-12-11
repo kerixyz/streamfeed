@@ -85,7 +85,7 @@ async function generateSummaries(streamerName) {
             ]
           }
         }
-        `;
+    `;
 
     console.log('Sending prompt to OpenAI:', prompt);
 

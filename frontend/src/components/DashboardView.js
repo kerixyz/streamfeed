@@ -12,6 +12,8 @@ const DashboardView = ({ streamer }) => {
   });
   const [categorySummaries, setCategorySummaries] = useState({});
   const [quotes, setQuotes] = useState({});
+  const [viewerCount, setViewerCount] = useState({});
+
 
   useEffect(() => {
     if (streamer) {
@@ -55,6 +57,8 @@ const DashboardView = ({ streamer }) => {
               ? summaries.marketing_strategy_quotes.split('\n').filter(q => q.trim() !== '')
               : [],
           });
+
+        setViewerCount(response.data.uniqueUsers);
       }
     } catch (error) {
       console.error('Error fetching summaries:', error);
@@ -140,7 +144,9 @@ const DashboardView = ({ streamer }) => {
                 </section>
 
                 <section className="w-full max-w-5xl mb-6">
-                    <h3 className="text-2xl font-semibold mb-4 text-center">Other Summaries</h3>
+                    <h3 className="text-2xl font-semibold mb-4 text-center">Feedback Summaries</h3>
+                    <h4 className="text-2xl font-semibold mb-4 text-center">Summaries generated from {viewerCount} viewers.</h4>
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {[
                         { category: 'Content Production', summary: topSummaries.content_production, quotes: quotes.content_production },

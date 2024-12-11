@@ -131,6 +131,15 @@ router.get('/get-chat-summaries', async (req, res) => {
         'SELECT why_viewers_watch, how_to_improve, content_production, community_management, marketing_strategy, why_viewers_watch_quotes,how_to_improve_quotes, content_production_quotes, community_management_quotes, marketing_strategy_quotes FROM chat_summaries WHERE streamer_name ILIKE $1',
         [streamerName]
       );
+
+      const userCountResult = await pool.query(
+        `SELECT COUNT(DISTINCT user_id) AS unique_users 
+         FROM chat_messages 
+         WHERE streamer_name = $1`,
+        [streamerName]
+      );
+  
+      const uniqueUsers = userCountResult.rows[0].unique_users;
   
       if (result.rows.length === 0) {
         console.log(`No summaries found for streamer: ${streamerName}. Triggering summary generation.`);
@@ -151,6 +160,7 @@ router.get('/get-chat-summaries', async (req, res) => {
       res.json({
         success: true,
         summaries,
+        uniqueUsers,
       });
     } catch (error) {
         console.error('Error fetching or generating summaries:', {

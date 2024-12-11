@@ -94,22 +94,34 @@ async function generateSummaries(streamerName) {
   
     // Parse the response into categories using the '###' delimiter
     // Split the response into sections by '###' delimiters
+    // Split the OpenAI response into sections by the '###' delimiter
     const categorySections = output.split('###').slice(1); // Ignore the first empty split
 
     const summaries = {};
     const quotes = {};
 
+    // Process each category section
     categorySections.forEach(section => {
-    const [categoryTitle, content] = section.split(':').map(str => str.trim());
-    const summaryMatch = content.match(/Summary:\s*([\s\S]*?)Quotes:/);
-    const quoteMatch = content.match(/Quotes:\s*([\s\S]*)/);
+    const lines = section.trim().split('\n').filter(line => line); // Split into lines and remove empty ones
 
-    summaries[categoryTitle.toLowerCase().replace(/\s+/g, '_')] = summaryMatch ? summaryMatch[1].trim() : 'No summary available';
-    quotes[categoryTitle.toLowerCase().replace(/\s+/g, '_')] = quoteMatch ? quoteMatch[1].trim().split('\n- ').filter(q => q) : ['No quotes available'];
+    if (lines.length >= 2) {
+        const categoryTitle = lines[0].trim().replace(':', ''); // Extract category title (e.g., "Why Viewers Watch")
+        const summaryMatch = lines.find(line => line.startsWith('Summary:'));
+        const quoteStartIndex = lines.findIndex(line => line.startsWith('Quotes:'));
+
+        // Extract the summary and quotes
+        summaries[categoryTitle.toLowerCase().replace(/\s+/g, '_')] =
+        summaryMatch ? summaryMatch.replace('Summary:', '').trim() : 'No summary available';
+
+        quotes[categoryTitle.toLowerCase().replace(/\s+/g, '_')] =
+        quoteStartIndex >= 0
+            ? lines.slice(quoteStartIndex + 1).map(line => line.replace(/^-/, '').trim()) // Extract quotes
+            : ['No quotes available'];
+    }
     });
 
-    console.log('Summaries:', summaries);
-    console.log('Direct Quotes:', quotes);
+    console.log('Parsed Summaries:', summaries);
+    console.log('Parsed Quotes:', quotes);
 
 
     // Save the summaries to the database
@@ -132,16 +144,16 @@ async function generateSummaries(streamerName) {
             marketing_strategy_quotes = $11`,
         [
           streamerName,
-          summaries.why_viewers_watch,
-          summaries.how_to_improve,
-          summaries.content_production,
-          summaries.community_management,
-          summaries.marketing_strategy,
-          quotes.why_viewers_watch.join('\n'),
-          quotes.how_to_improve.join('\n'),
-          quotes.content_production.join('\n'),
-          quotes.community_management.join('\n'),
-          quotes.marketing_strategy.join('\n'),
+          summaries.why_viewers_watch || 'No summary available',
+          summaries.how_to_improve || 'No summary available',
+          summaries.content_production || 'No summary available',
+          summaries.community_management || 'No summary available',
+          summaries.marketing_strategy || 'No summary available',
+          quotes.why_viewers_watch?.join('\n') || 'No quotes available',
+          quotes.how_to_improve?.join('\n') || 'No quotes available',
+          quotes.content_production?.join('\n') || 'No quotes available',
+          quotes.community_management?.join('\n') || 'No quotes available',
+          quotes.marketing_strategy?.join('\n') || 'No quotes available',
         ]
       );
       

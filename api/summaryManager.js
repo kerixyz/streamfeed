@@ -92,8 +92,6 @@ async function generateSummaries(streamerName) {
 
     console.log('OpenAI output:', output);
   
-    // Parse the response into categories using the '###' delimiter
-    // Split the response into sections by '###' delimiters
     // Split the OpenAI response into sections by the '###' delimiter
     const categorySections = output.split('###').slice(1); // Ignore the first empty split
 
@@ -102,27 +100,28 @@ async function generateSummaries(streamerName) {
 
     // Process each category section
     categorySections.forEach(section => {
-    const lines = section.trim().split('\n').filter(line => line); // Split into lines and remove empty ones
+    const lines = section.trim().split('\n').filter(line => line.trim()); // Split into lines and remove empty/whitespace-only lines
 
     if (lines.length >= 2) {
         const categoryTitle = lines[0].trim().replace(':', ''); // Extract category title (e.g., "Why Viewers Watch")
-        const summaryMatch = lines.find(line => line.startsWith('Summary:'));
-        const quoteStartIndex = lines.findIndex(line => line.startsWith('Quotes:'));
+        console.log('Processing category:', categoryTitle);
 
-        // Extract the summary and quotes
+        // Match the summary
+        const summaryIndex = lines.findIndex(line => line.startsWith('Summary:'));
+        const quoteIndex = lines.findIndex(line => line.startsWith('Quotes:'));
+
         summaries[categoryTitle.toLowerCase().replace(/\s+/g, '_')] =
-        summaryMatch ? summaryMatch.replace('Summary:', '').trim() : 'No summary available';
+        summaryIndex >= 0 ? lines[summaryIndex].replace('Summary:', '').trim() : 'No summary available';
 
         quotes[categoryTitle.toLowerCase().replace(/\s+/g, '_')] =
-        quoteStartIndex >= 0
-            ? lines.slice(quoteStartIndex + 1).map(line => line.replace(/^-/, '').trim()) // Extract quotes
+        quoteIndex >= 0
+            ? lines.slice(quoteIndex + 1).map(line => line.replace(/^-/, '').trim()) // Extract quotes after "Quotes:"
             : ['No quotes available'];
     }
     });
 
     console.log('Parsed Summaries:', summaries);
     console.log('Parsed Quotes:', quotes);
-
 
     // Save the summaries to the database
     await pool.query(

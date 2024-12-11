@@ -46,6 +46,8 @@ async function generateSummaries(streamerName) {
         Messages:
         ${messageText}
 
+        Do not include any surrounding code block markers in your response. 
+
         Respond with a valid JSON object in the following format:
 
         {
@@ -96,13 +98,22 @@ async function generateSummaries(streamerName) {
       temperature: 0.7,
     });
 
-    let parsedResponse;
     try {
-        parsedResponse = JSON.parse(response.choices[0].message.content);
-    } catch (error) {
-        console.error('Error parsing OpenAI response as JSON:', error);
+        // Step 1: Clean the response content
+        const rawResponse = response.choices[0].message.content.trim();
+      
+        // Remove surrounding code block markers if they exist
+        const cleanedResponse = rawResponse.replace(/^```json/, '').replace(/```$/, '').trim();
+      
+        // Step 2: Parse the cleaned response as JSON
+        parsedResponse = JSON.parse(cleanedResponse);
+      
+        console.log('Parsed JSON Response:', parsedResponse);
+      } catch (error) {
+        console.error('Error parsing OpenAI response as JSON:', error.message);
         throw new Error('Failed to parse OpenAI response.');
-    }
+      }
+      
 
     // Validate the structure of the JSON
     const categories = ['why_viewers_watch', 'how_to_improve', 'content_production', 'community_management', 'marketing_strategy'];

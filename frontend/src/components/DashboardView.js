@@ -39,12 +39,22 @@ const DashboardView = ({ streamer }) => {
         });
   
         setQuotes({
-          why_viewers_watch: summaries.why_viewers_watch_quotes?.split('\n') || [],
-          how_to_improve: summaries.how_to_improve_quotes?.split('\n') || [],
-          content_production: summaries.content_production_quotes?.split('\n') || [],
-          community_management: summaries.community_management_quotes?.split('\n') || [],
-          marketing_strategy: summaries.marketing_strategy_quotes?.split('\n') || [],
-        });
+            why_viewers_watch: summaries.why_viewers_watch_quotes
+              ? summaries.why_viewers_watch_quotes.split('\n').filter(q => q.trim() !== '')
+              : [],
+            how_to_improve: summaries.how_to_improve_quotes
+              ? summaries.how_to_improve_quotes.split('\n').filter(q => q.trim() !== '')
+              : [],
+            content_production: summaries.content_production_quotes
+              ? summaries.content_production_quotes.split('\n').filter(q => q.trim() !== '')
+              : [],
+            community_management: summaries.community_management_quotes
+              ? summaries.community_management_quotes.split('\n').filter(q => q.trim() !== '')
+              : [],
+            marketing_strategy: summaries.marketing_strategy_quotes
+              ? summaries.marketing_strategy_quotes.split('\n').filter(q => q.trim() !== '')
+              : [],
+          });
       }
     } catch (error) {
       console.error('Error fetching summaries:', error);
@@ -151,7 +161,6 @@ const DashboardView = ({ streamer }) => {
                     ))}
                 </div>
                 </section>
-
             </>
           )}
         </section>

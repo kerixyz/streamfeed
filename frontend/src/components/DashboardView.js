@@ -144,7 +144,7 @@ const DashboardView = ({ streamer }) => {
                 </section>
 
                 <section className="w-full max-w-5xl mb-6">
-                    <h3 className="text-2xl font-semibold mb-4 text-center">Feedback Summaries</h3>
+                    {/* <h3 className="text-2xl font-semibold mb-4 text-center">Feedback Summaries</h3> */}
                     <h4 className="text-2xl font-semibold mb-4 text-center">Summaries generated from {viewerCount} viewers.</h4>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

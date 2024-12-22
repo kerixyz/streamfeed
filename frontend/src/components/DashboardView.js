@@ -119,7 +119,7 @@ const DashboardView = ({ streamer }) => {
             </div>
           ) : (
             <>
-                {/* <section className="w-full max-w-5xl mb-6">
+                <section className="w-full max-w-5xl mb-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#56e8ad' }}>
                         <h4 className="text-xl font-semibold mb-1">Why Your Viewers Watch You</h4>
@@ -144,7 +144,7 @@ const DashboardView = ({ streamer }) => {
                 </section>
 
                 <section className="w-full max-w-5xl mb-6">
-                    <h3 className="text-2xl font-semibold mb-4 text-center">Feedback Summaries</h3>
+                    {/* <h3 className="text-2xl font-semibold mb-4 text-center">Feedback Summaries</h3> */}
                     <h4 className="text-2xl font-semibold mb-4 text-center">Summaries generated from {viewerCount} viewers.</h4>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -164,7 +164,7 @@ const DashboardView = ({ streamer }) => {
                         </div>
                         ))}
                     </div>
-                </section> */}
+                </section>
             </>
           )}
         </section>

@@ -13,21 +13,14 @@ const Newcomer = () => {
 
   // Handle form submission
   const handleSubmit = async () => {
-    if (userName.trim() === '' || streamerName.trim() === '') return;
+    if (userName.trim() === '' || streamerName.trim() === '') {
+      alert('Both fields are required!');
+      return;
+    }
 
     // Generate a unique userId for this user
     const generatedUserId = `newcomer_${userName}_${Date.now()}`;
     setUserId(generatedUserId);
-
-    // Optionally, you can initialize chat history here
-    try {
-      await axios.post(`${BASE_URL}/initialize-chat`, {
-        userId: generatedUserId,
-        streamerName,
-      });
-    } catch (error) {
-      console.error('Error initializing chat:', error);
-    }
   };
 
   const handleSendMessage = async () => {
@@ -43,7 +36,7 @@ const Newcomer = () => {
         streamerName,
         message: input,
         role: 'user',
-    });    
+      });
 
       // Get the chatbot's response
       const response = await axios.post(`${BASE_URL}/chat`, {
@@ -57,12 +50,11 @@ const Newcomer = () => {
 
         // Save the bot's reply to the database
         await axios.post(`${BASE_URL}/save-newcomer-message`, {
-            userId,
-            streamerName,
-            message: response.data.reply,
-            role: 'bot',
+          userId,
+          streamerName,
+          message: response.data.reply,
+          role: 'bot',
         });
-        
       }
     } catch (error) {
       console.error('Error sending message:', error.response?.data || error.message);

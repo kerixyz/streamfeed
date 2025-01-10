@@ -73,7 +73,7 @@ const Chat = () => {
   // Handle name submission for viewers
   const handleNameSubmit = async () => {
     if (userName.trim() !== '') {
-      const generatedUserId = `viewer_${userName}_${Date.now()}`;
+      const generatedUserId = `newcomer_${userName}_${Date.now()}`;
       setUserId(generatedUserId);
       localStorage.setItem('userId', generatedUserId);
 

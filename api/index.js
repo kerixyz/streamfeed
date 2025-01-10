@@ -73,7 +73,7 @@ app.post('/api/chat', async (req, res) => {
         console.error('Error processing chat:', error);
         return res.status(500).json({ error: 'An error occurred while processing the chat.' });
     }
-});
+}); 
 
 // Save messages in chat_messages table with version info
 async function saveMessage(userId, message, role, version) {

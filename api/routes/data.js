@@ -94,6 +94,27 @@ router.post('/save-chat-message', async (req, res) => {
     }
 });
 
+router.post('/save-newcomer-message', async (req, res) => {
+  const { userId, streamerName, message, role } = req.body;
+
+  try {
+      console.log("Saving newcomer message with data:", { userId, streamerName, message, role });
+
+      const query = `
+          INSERT INTO newcomer_messages (user_id, streamer_name, message, role, created_at)
+          VALUES ($1, $2, $3, $4, NOW())
+      `;
+      const values = [userId, streamerName, message, role];
+
+      await pool.query(query, values);
+      res.json({ success: true });
+  } catch (err) {
+      console.error('Error saving newcomer message to database:', err);
+      res.status(500).json({ error: 'Failed to save newcomer message' });
+  }
+});
+
+
 // Route to fetch chat messages filtered by streamer name (userId is optional)
 router.get('/get-chat-messages', async (req, res) => {
   const { userId, streamerName } = req.query;

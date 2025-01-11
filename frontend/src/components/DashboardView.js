@@ -126,51 +126,6 @@ const DashboardView = ({ streamer }) => {
             </div>
           ) : (
             <>
-<<<<<<< HEAD
-                <section className="w-full max-w-5xl mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#56e8ad' }}>
-                        <h4 className="text-xl font-semibold mb-1">Why Your Viewers Watch You</h4>
-                        <p className="text-base text-gray-700 mb-2">{topSummaries.why_viewers_watch}</p>
-                        <ul className="list-disc ml-4">
-                            {quotes.why_viewers_watch.map((quote, index) => (
-                            <li key={index} className="text-sm text-gray-600">"{quote}"</li>
-                            ))}
-                        </ul>
-                        </div>
-
-                        <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#ff8280' }}>
-                        <h4 className="text-xl font-semibold mb-1">How You Can Improve</h4>
-                        <p className="text-base text-gray-700 mb-2">{topSummaries.how_to_improve}</p>
-                        <ul className="list-disc ml-4">
-                            {quotes.how_to_improve.map((quote, index) => (
-                            <li key={index} className="text-sm text-gray-600">"{quote}"</li>
-                            ))}
-                        </ul>
-                        </div>
-                    </div>
-                </section>
-
-                <section className="w-full max-w-5xl mb-6">
-                    {/* <h3 className="text-2xl font-semibold mb-4 text-center">Feedback Summaries</h3> */}
-                    <h4 className="text-2xl font-semibold mb-4 text-center">Summaries generated from {viewerCount} viewers.</h4>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {[
-                        { category: 'Content Production', summary: topSummaries.content_production, quotes: quotes.content_production },
-                        { category: 'Community Management', summary: topSummaries.community_management, quotes: quotes.community_management },
-                        { category: 'Marketing Strategy', summary: topSummaries.marketing_strategy, quotes: quotes.marketing_strategy },
-                        ].map(({ category, summary, quotes }) => (
-                        <div key={category} className="p-4 bg-gray-100 rounded-lg shadow-md">
-                            <h4 className="text-lg font-semibold mb-2">{category}</h4>
-                            <p className="text-base text-gray-700 mb-2">{summary}</p>
-                            <ul className="list-disc ml-4">
-                            {quotes.map((quote, index) => (
-                                <li key={index} className="text-sm text-gray-600">"{quote}"</li>
-                            ))}
-                            </ul>
-                        </div>
-=======
               <section className="w-full max-w-5xl mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg shadow-md border-l-4" style={{ borderColor: '#56e8ad' }}>
@@ -214,17 +169,12 @@ const DashboardView = ({ streamer }) => {
                       <ul className="list-disc ml-4">
                         {quotes?.map((quote, index) => (
                           <li key={index} className="text-sm text-gray-600">"{quote}"</li>
->>>>>>> c24a9c899e4cee290bdfe6b1efc85bdb88d07b86
                         ))}
                       </ul>
                     </div>
-<<<<<<< HEAD
-                </section>
-=======
                   ))}
                 </div>
               </section>
->>>>>>> c24a9c899e4cee290bdfe6b1efc85bdb88d07b86
             </>
           )}
         </section>

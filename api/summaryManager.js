@@ -45,8 +45,6 @@ async function generateSummaries(streamerName) {
         Messages:
         ${messageText}
 
-        
-
         Do not include any surrounding code block markers in your response. For each summaries, try to generate at least two sentences long so it is lengthy and rich in information.
         Respond with a valid JSON object in the following format:
 

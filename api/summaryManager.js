@@ -17,8 +17,8 @@ async function generateSummaries(streamerName) {
   
       // Fetch messages for the streamer
       const result = await pool.query(
-        "SELECT message FROM chat_messages WHERE streamer_name ILIKE $1 AND user_id LIKE $2",
-        [streamerName, 'viewer_%']
+        "SELECT message FROM chat_messages WHERE streamer_name ILIKE $1",
+        [streamerName]
       );
   
       const messages = result.rows.map(row => ({

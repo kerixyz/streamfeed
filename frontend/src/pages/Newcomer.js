@@ -19,7 +19,7 @@ const Newcomer = () => {
     }
 
     // Generate a unique userId for this user
-    const generatedUserId = `viewer_${userName}_${Date.now()}`;
+    const generatedUserId = `newcomer_${userName}_${Date.now()}`;
     setUserId(generatedUserId);
   };
 

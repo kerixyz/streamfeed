@@ -91,28 +91,28 @@ const DashboardView = ({ streamer }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-8 px-4 bg-gray-50">
-      <h2 className="text-3xl font-semibold mb-4 text-center">Streamer Dashboard</h2>
+    <div className="min-h-screen flex flex-col items-start py-8 px-8 bg-gray-50">
+      <h2 className="text-3xl font-semibold mb-4">Streamer Dashboard</h2>
 
       <div className="flex mb-4">
         <button
           className={`px-4 py-2 ${activeTab === 'viewer' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
           onClick={() => setActiveTab('viewer')}
         >
-          Viewer Feedback
+          Community
         </button>
         <button
           className={`px-4 py-2 ${activeTab === 'external' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
           onClick={() => setActiveTab('external')}
         >
-          External Feedback
+          Newcomers
         </button>
       </div>
 
       {activeTab === 'viewer' && (
-        <section className="w-full max-w-5xl mb-6">
+        <section className="w-full max-w-7xl mb-6">
           {chatMessages.length === 0 ? (
-            <div className="p-4 rounded-lg text-center">
+            <div className="p-4 rounded-lg">
               <p>No feedback yet.</p>
               <p>Share this link with your viewers to start gathering feedback:</p>
               <a
@@ -126,7 +126,8 @@ const DashboardView = ({ streamer }) => {
             </div>
           ) : (
             <>
-              <section className="w-full max-w-7xl mx-auto mb-8">
+              {/* Overview Section */}
+              <section className="w-full max-w-7xl mb-8">
                 <h1 className="text-3xl font-bold mb-6">Overview</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* # of Viewers */}
@@ -154,7 +155,7 @@ const DashboardView = ({ streamer }) => {
               </section>
 
               {/* Feedback Summary Section */}
-              <section className="w-full max-w-7xl mx-auto mb-8">
+              <section className="w-full max-w-7xl mb-8">
                 <h2 className="text-xl font-bold mb-6">Feedback Summary</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {[
@@ -182,11 +183,12 @@ const DashboardView = ({ streamer }) => {
       )}
 
       {activeTab === 'external' && (
-        <section className="w-full max-w-5xl mb-6">
+        <section className="w-full max-w-xl mb-6">
           <p>External feedback content will go here (coming soon).</p>
         </section>
       )}
     </div>
+
   );
 };
 

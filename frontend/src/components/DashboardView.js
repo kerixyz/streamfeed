@@ -22,11 +22,29 @@ const DashboardView = ({ streamer }) => {
   });
   const [viewerCount, setViewerCount] = useState(0);
 
+  const [topNewcSummaries, setTopNewcSummaries] = useState({
+    why_viewers_watch: 'Loading...',
+    how_to_improve: 'Loading...',
+    content_production: 'Loading...',
+    community_management: 'Loading...',
+    marketing_strategy: 'Loading...',
+  });
+  const [newcQuotes, setNewcQuotes] = useState({
+    why_viewers_watch: [],
+    how_to_improve: [],
+    content_production: [],
+    community_management: [],
+    marketing_strategy: [],
+  });
+  const [newcCount, setNewcCount] = useState(0);
+
+
 
   useEffect(() => {
     if (streamer) {
       fetchChatMessages();
       fetchSummaries();
+      fetchNewcSummaries();
     }
   }, [streamer]);
 
@@ -68,6 +86,52 @@ const DashboardView = ({ streamer }) => {
         });
 
         setViewerCount(response.data.uniqueUsers || 0);
+      } else {
+        console.error('Summaries not found or incomplete response:', response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching summaries:', error);
+    }
+  };
+
+  const fetchNewcSummaries = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/get-newc-summaries`, {
+        params: { streamerName: streamer },
+      });
+
+      console.log('API Response for Summaries:', response.data);
+
+      if (response.data.success && response.data.summaries) {
+        const summaries = response.data.summaries;
+
+        setTopNewcSummaries({
+          why_viewers_watch: summaries.why_viewers_watch || 'No summary available',
+          how_to_improve: summaries.how_to_improve || 'No summary available',
+          content_production: summaries.content_production || 'No summary available',
+          community_management: summaries.community_management || 'No summary available',
+          marketing_strategy: summaries.marketing_strategy || 'No summary available',
+        });
+
+        setNewcQuotes({
+          why_viewers_watch: summaries.why_viewers_watch_quotes
+            ? summaries.why_viewers_watch_quotes.split('\n').filter((q) => q.trim() !== '')
+            : [],
+          how_to_improve: summaries.how_to_improve_quotes
+            ? summaries.how_to_improve_quotes.split('\n').filter((q) => q.trim() !== '')
+            : [],
+          content_production: summaries.content_production_quotes
+            ? summaries.content_production_quotes.split('\n').filter((q) => q.trim() !== '')
+            : [],
+          community_management: summaries.community_management_quotes
+            ? summaries.community_management_quotes.split('\n').filter((q) => q.trim() !== '')
+            : [],
+          marketing_strategy: summaries.marketing_strategy_quotes
+            ? summaries.marketing_strategy_quotes.split('\n').filter((q) => q.trim() !== '')
+            : [],
+        });
+
+        setNewcCount(response.data.uniqueUsers || 0);
       } else {
         console.error('Summaries not found or incomplete response:', response.data);
       }

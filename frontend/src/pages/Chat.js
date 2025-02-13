@@ -74,7 +74,7 @@ const Chat = () => {
   const handleNameSubmit = async () => {
     if (userName.trim() !== '') {
     //to change with DRG
-      const generatedUserId = `viewer_${userName}_${Date.now()}`;
+      const generatedUserId = `newcomer_${userName}_${Date.now()}`;
       setUserId(generatedUserId);
       localStorage.setItem('userId', generatedUserId);
 
@@ -82,6 +82,11 @@ const Chat = () => {
       loadChatHistory(generatedUserId);
     }
   };
+
+  // INSERT INTO newc_messages (user_id, message, role, version, streamer_name, created_at, summarized, viewer_type)
+  // SELECT user_id, message, role, version, streamer_name, created_at, summarized, viewer_type
+  // FROM chat_messages
+  // WHERE user_id LIKE 'newcomer_%';
 
   const handleSendMessage = async () => {
     if (input.trim() === '' || !userId) return;

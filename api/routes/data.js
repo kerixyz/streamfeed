@@ -145,7 +145,7 @@ router.get('/get-chat-summaries', async (req, res) => {
     if (!streamerName) {
       return res.status(400).json({ error: 'Streamer name is required.' });
     }
-  
+
     try {
       // Check if summaries exist
       const result = await pool.query(
@@ -190,61 +190,61 @@ router.get('/get-chat-summaries', async (req, res) => {
           context: { streamerName },
         });
         res.status(500).json({ error: 'An error occurred while fetching or generating summaries.' });
-      }
-  });
-
-  router.get('/get-newc-summaries', async (req, res) => {
-    const { streamerName } = req.query;
-  
-    if (!streamerName) {
-      return res.status(400).json({ error: 'Streamer name is required.' });
     }
-  
-    try {
-      // Check if summaries exist
-      const result = await pool.query(
-        'SELECT why_viewers_watch, how_to_improve, content_production, community_management, marketing_strategy, why_viewers_watch_quotes,how_to_improve_quotes, content_production_quotes, community_management_quotes, marketing_strategy_quotes FROM newc_summaries WHERE streamer_name ILIKE $1',
-        [streamerName]
-      );
+});
 
-      const userCountResult = await pool.query(
-        `SELECT COUNT(DISTINCT user_id) AS unique_users 
-         FROM newc_messages 
-         WHERE streamer_name = $1`,
-        [streamerName]
-      );
-  
-      const uniqueUsers = userCountResult.rows[0].unique_users;
-  
-      if (result.rows.length === 0) {
-        console.log(`No summaries found for streamer: ${streamerName}. Triggering summary generation.`);
-        
-        // Trigger summary generation
-        const summaries = await generateNewcSummaries(streamerName);
-  
-        console.log(`Summaries generated for streamer: ${streamerName}`, summaries);
-  
-        return res.json({
-          success: true,
-          summaries,
-          message: 'Summaries generated successfully.',
-        });
-      }
-  
-      const summaries = result.rows[0];
-      res.json({
+router.get('/get-newc-summaries', async (req, res) => {
+  const { streamerName } = req.query;
+
+  if (!streamerName) {
+    return res.status(400).json({ error: 'Streamer name is required.' });
+  }
+
+  try {
+    // Check if summaries exist
+    const result = await pool.query(
+      'SELECT why_viewers_watch, how_to_improve, content_production, community_management, marketing_strategy, why_viewers_watch_quotes,how_to_improve_quotes, content_production_quotes, community_management_quotes, marketing_strategy_quotes FROM newc_summaries WHERE streamer_name ILIKE $1',
+      [streamerName]
+    );
+
+    const userCountResult = await pool.query(
+      `SELECT COUNT(DISTINCT user_id) AS unique_users 
+        FROM newc_messages 
+        WHERE streamer_name = $1`,
+      [streamerName]
+    );
+
+    const uniqueUsers = userCountResult.rows[0].unique_users;
+
+    if (result.rows.length === 0) {
+      console.log(`No summaries found for streamer: ${streamerName}. Triggering summary generation.`);
+      
+      // Trigger summary generation
+      const summaries = await generateNewcSummaries(streamerName);
+
+      console.log(`Summaries generated for streamer: ${streamerName}`, summaries);
+
+      return res.json({
         success: true,
         summaries,
-        uniqueUsers,
+        message: 'Summaries generated successfully.',
       });
-    } catch (error) {
-        console.error('Error fetching or generating summaries:', {
-          message: error.message,
-          stack: error.stack,
-          context: { streamerName },
-        });
-        res.status(500).json({ error: 'An error occurred while fetching or generating summaries.' });
-      }
-  });
+    }
+
+    const summaries = result.rows[0];
+    res.json({
+      success: true,
+      summaries,
+      uniqueUsers,
+    });
+  } catch (error) {
+      console.error('Error fetching or generating summaries:', {
+        message: error.message,
+        stack: error.stack,
+        context: { streamerName },
+      });
+      res.status(500).json({ error: 'An error occurred while fetching or generating summaries.' });
+    }
+});
   
   module.exports = router;

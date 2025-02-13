@@ -83,10 +83,10 @@ const Chat = () => {
     }
   };
 
-  // INSERT INTO newc_messages (user_id, message, role, version, streamer_name, created_at, summarized, viewer_type)
-  // SELECT user_id, message, role, version, streamer_name, created_at, summarized, viewer_type
-  // FROM chat_messages
-  // WHERE user_id LIKE 'newcomer_%';
+//   INSERT INTO newc_messages
+// SELECT *
+// FROM chat_messages
+// WHERE user_id ILIKE 'newcomer_%';
 
   const handleSendMessage = async () => {
     if (input.trim() === '' || !userId) return;

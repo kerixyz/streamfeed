@@ -22,6 +22,7 @@ const DashboardView = ({ streamer }) => {
   });
   const [viewerCount, setViewerCount] = useState(0);
 
+
   useEffect(() => {
     if (streamer) {
       fetchChatMessages();

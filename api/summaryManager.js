@@ -17,7 +17,7 @@ async function generateSummaries(streamerName) {
   
       // Fetch messages for the streamer
       const result = await pool.query(
-        "SELECT message FROM chat_messages WHERE streamer_name ILIKE $1",
+        "SELECT message FROM chat_messages WHERE streamer_name ILIKE $1 AND user_id ILIKE 'viewer_%'",
         [streamerName]
       );
   
@@ -190,18 +190,18 @@ async function generateSummaries(streamerName) {
         // Create message text for the OpenAI prompt
         const messageText = messages.map(m => `${m.role}: ${m.content}`).join('\n');
         console.log('Prepared message text for OpenAI:', messageText);
-  
-  
+
+
         const prompt = `
           The following is a conversation between a bot and a user. The bot asks targeted questions to gather feedback about a livestreamer. 
           The user's responses are feedback about the streamer's content, engagement, and overall performance. Summarize the feedback into five categories. For each category, include direct quotes from the user's responses to support the summary.
-  
+
           Messages:
           ${messageText}
-  
+
           Do not include any surrounding code block markers in your response. For each summaries, try to generate at least two sentences long so it is lengthy and rich in information.
           Respond with a valid JSON object in the following format:
-  
+
           {
           "why_viewers_watch": {
               "summary": "Summary of why viewers watch.",
@@ -240,16 +240,16 @@ async function generateSummaries(streamerName) {
             }
           }
       `;
-  
+
       console.log('Sending prompt to OpenAI:', prompt);
-  
+
       const response = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 1500,
         temperature: 0.7,
       });
-  
+
       try {
           // Step 1: Clean the response content
           const rawResponse = response.choices[0].message.content.trim();
@@ -266,17 +266,17 @@ async function generateSummaries(streamerName) {
           throw new Error('Failed to parse OpenAI response.');
         }
         
-  
+
       // Validate the structure of the JSON
       const categories = ['why_viewers_watch', 'how_to_improve', 'content_production', 'community_management', 'marketing_strategy'];
-  
+
       const summaries = {};
       const quotes = {};
       categories.forEach(category => {
       summaries[category] = parsedResponse[category]?.summary || 'No summary available';
       quotes[category] = parsedResponse[category]?.quotes?.join('\n') || 'No quotes available';
       });
-  
+
       // Save the summaries and quotes to the database
       await pool.query(
       `INSERT INTO newc_summaries 
@@ -309,8 +309,8 @@ async function generateSummaries(streamerName) {
           quotes.marketing_strategy,
       ]
       );
-  
-  
+
+
       console.log(`Summaries successfully saved for streamer: ${streamerName}`);
       return summaries;
       } catch (error) {

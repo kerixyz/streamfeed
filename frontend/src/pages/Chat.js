@@ -74,7 +74,7 @@ const Chat = () => {
   const handleNameSubmit = async () => {
     if (userName.trim() !== '') {
     //to change with DRG
-      const generatedUserId = `newcomer_${userName}_${Date.now()}`;
+      const generatedUserId = `viewer_${userName}_${Date.now()}`;
       setUserId(generatedUserId);
       localStorage.setItem('userId', generatedUserId);
 
@@ -83,10 +83,10 @@ const Chat = () => {
     }
   };
 
-//   INSERT INTO newc_messages
-// SELECT *
-// FROM chat_messages
-// WHERE user_id ILIKE 'newcomer_%';
+  //   INSERT INTO newc_messages
+  // SELECT *
+  // FROM chat_messages
+  // WHERE user_id ILIKE 'newcomer_%';
 
   const handleSendMessage = async () => {
     if (input.trim() === '' || !userId) return;

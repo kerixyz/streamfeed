@@ -100,7 +100,7 @@ const DashboardView = ({ streamer }) => {
         params: { streamerName: streamer },
       });
 
-      console.log('API Response for Summaries:', response.data);
+      console.log('API Newc Response for Summaries:', response.data);
 
       if (response.data.success && response.data.summaries) {
         const summaries = response.data.summaries;
@@ -136,7 +136,7 @@ const DashboardView = ({ streamer }) => {
         console.error('Summaries not found or incomplete response:', response.data);
       }
     } catch (error) {
-      console.error('Error fetching summaries:', error);
+      console.error('Error Newc fetching summaries:', error);
     }
   };
 
@@ -149,7 +149,7 @@ const DashboardView = ({ streamer }) => {
       const userMessages = response.data.messages.filter((msg) => msg.role === 'user');
       setChatMessages(userMessages);
 
-      console.log('Fetched chat messages:', userMessages);
+      // console.log('Fetched chat messages:', userMessages);
     } catch (error) {
       console.error('Error fetching chat messages:', error);
     }

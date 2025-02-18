@@ -257,63 +257,65 @@ const DashboardView = ({ streamer }) => {
       {activeTab === 'external' && (
         <>
           {/* Overview Section */}
-          <section className="w-full max-w-7xl mb-8">
-            <h1 className="text-3xl font-bold mb-6">Overview</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* # of Viewers */}
-              <div className="p-6 bg-white rounded-lg shadow-md">
-                <h4 className="text-lg font-medium text-gray-500"># of viewers</h4>
-                <p className="text-5xl font-bold text-gray-900 mt-4">{newcCount}</p>
-              </div>
-
-              {/* Why Your Viewers Watch You */}
-              <div className="p-6 bg-white rounded-lg shadow-md">
-                <h4 className="text-lg font-medium text-gray-500">Why your viewers watch you</h4>
-                <p className="text-sm text-gray-700 mt-4">
-                  {topNewcSummaries?.why_viewers_watch || 'No summary available'}
-                </p>
-              </div>
-
-              {/* How You Can Improve */}
-              <div className="p-6 bg-white rounded-lg shadow-md">
-                <h4 className="text-lg font-medium text-gray-500">How you can improve</h4>
-                <p className="text-sm text-gray-700 mt-4">
-                  {topNewcSummaries?.how_to_improve || 'No summary available'}
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* Feedback Summary Section */}
-          <section className="w-full max-w-7xl mb-8">
-            <h2 className="text-xl font-bold mb-6">Feedback Summary</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { category: 'Content Production', summary: topNewcSummaries.content_production, quotes: newcQuotes.content_production },
-                { category: 'Community Management', summary: topNewcSummaries.community_management, quotes: newcQuotes.community_management },
-                { category: 'Marketing Strategy', summary: topNewcSummaries.marketing_strategy, quotes: newcQuotes.marketing_strategy },
-              ].map(({ category, summary, quotes }) => (
-                <div key={category} className="p-6 bg-white rounded-lg shadow-md">
-                  <h4 className="text-lg font-medium text-gray-900">{category}</h4>
-                  <p className="text-sm text-gray-700 mt-4">{summary || 'No summary available'}</p>
-                  <div className="mt-4 border-t pt-4 space-y-2">
-                    {quotes?.map((quote, index) => (
-                      <p key={index} className="text-sm text-gray-600">
-                        "{quote}"
-                      </p>
-                    ))}
-                  </div>
+          <section className="w-full max-w-7xl mb-6">
+            <section className="w-full max-w-7xl mb-8">
+                <h1 className="text-3xl font-bold mb-6">Overview</h1>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* # of Viewers */}
+                <div className="p-6 bg-white rounded-lg shadow-md">
+                    <h4 className="text-lg font-medium text-gray-500"># of viewers</h4>
+                    <p className="text-5xl font-bold text-gray-900 mt-4">{newcCount}</p>
                 </div>
-              ))}
-            </div>
-            
-          </section>
 
-          <footer className="py-6 px-6 bg-white text-gray-600">
+                {/* Why Your Viewers Watch You */}
+                <div className="p-6 bg-white rounded-lg shadow-md">
+                    <h4 className="text-lg font-medium text-gray-500">Why your viewers watch you</h4>
+                    <p className="text-sm text-gray-700 mt-4">
+                    {topNewcSummaries?.why_viewers_watch || 'No summary available'}
+                    </p>
+                </div>
+
+                {/* How You Can Improve */}
+                <div className="p-6 bg-white rounded-lg shadow-md">
+                    <h4 className="text-lg font-medium text-gray-500">How you can improve</h4>
+                    <p className="text-sm text-gray-700 mt-4">
+                    {topNewcSummaries?.how_to_improve || 'No summary available'}
+                    </p>
+                </div>
+                </div>
+            </section>
+
+            {/* Feedback Summary Section */}
+            <section className="w-full max-w-7xl mb-8">
+                <h2 className="text-xl font-bold mb-6">Feedback Summary</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[
+                    { category: 'Content Production', summary: topNewcSummaries.content_production, quotes: newcQuotes.content_production },
+                    { category: 'Community Management', summary: topNewcSummaries.community_management, quotes: newcQuotes.community_management },
+                    { category: 'Marketing Strategy', summary: topNewcSummaries.marketing_strategy, quotes: newcQuotes.marketing_strategy },
+                ].map(({ category, summary, quotes }) => (
+                    <div key={category} className="p-6 bg-white rounded-lg shadow-md">
+                    <h4 className="text-lg font-medium text-gray-900">{category}</h4>
+                    <p className="text-sm text-gray-700 mt-4">{summary || 'No summary available'}</p>
+                    <div className="mt-4 border-t pt-4 space-y-2">
+                        {quotes?.map((quote, index) => (
+                        <p key={index} className="text-sm text-gray-600">
+                            "{quote}"
+                        </p>
+                        ))}
+                    </div>
+                    </div>
+                ))}
+                </div>
+                
+            </section>
+
+            <footer className="py-6 px-6 bg-white text-gray-600">
                 <p>This is an ongoing research project at the University of Washington. By clicking any of the links above, you acknowledge that your feedback may be used for ongoing research to improve the StreamFeed platform. We collect and analyze feedback to better understand how streamers engage with their audiences. Your participation is voluntary, and all data will be anonymized to ensure your privacy.</p>
                 <br/>
                 <p>For questions, comments, or feedback, please contact: kmallari[at]uw[dot]edu</p>
             </footer>
+          </section>
         </>
       )}
     </div>

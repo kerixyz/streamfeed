@@ -74,7 +74,7 @@ const Chat = () => {
   const handleNameSubmit = async () => {
     if (userName.trim() !== '') {
     //to change with DRG
-      const generatedUserId = `viewer_${userName}_${Date.now()}`;
+      const generatedUserId = `newcomer_${userName}_${Date.now()}`;
       setUserId(generatedUserId);
       localStorage.setItem('userId', generatedUserId);
 

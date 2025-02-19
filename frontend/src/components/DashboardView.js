@@ -269,7 +269,7 @@ const DashboardView = ({ streamer }) => {
 
                 {/* Why Your Viewers Watch You */}
                 <div className="p-6 bg-white rounded-lg shadow-md">
-                    <h4 className="text-lg font-medium text-gray-500">Why your viewers watch you</h4>
+                    <h4 className="text-lg font-medium text-gray-500">Why Potential Viewers Might Watch You</h4>
                     <p className="text-sm text-gray-700 mt-4">
                     {topNewcSummaries?.why_viewers_watch || 'No summary available'}
                     </p>
@@ -277,7 +277,7 @@ const DashboardView = ({ streamer }) => {
 
                 {/* How You Can Improve */}
                 <div className="p-6 bg-white rounded-lg shadow-md">
-                    <h4 className="text-lg font-medium text-gray-500">How you can improve</h4>
+                    <h4 className="text-lg font-medium text-gray-500">Newcomer Suggestions on Improvement</h4>
                     <p className="text-sm text-gray-700 mt-4">
                     {topNewcSummaries?.how_to_improve || 'No summary available'}
                     </p>

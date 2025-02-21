@@ -204,7 +204,7 @@ async function generateNewcSummaries(streamerName) {
 
       {
       "why_viewers_watch": {
-          "summary": "Summary of why viewers watch.",
+          "summary": "Summary of why viewers may start watching.",
           "quotes": [
           "Direct quote 1",
           "Direct quote 2"

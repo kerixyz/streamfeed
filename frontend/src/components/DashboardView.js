@@ -264,7 +264,7 @@ const DashboardView = ({ streamer }) => {
                 {/* # of Viewers */}
                 <div className="p-6 bg-white rounded-lg shadow-md">
                     <h4 className="text-lg font-medium text-gray-500"># of viewers</h4>
-                    <p className="text-5xl font-bold text-gray-900 mt-4">{newcCount}</p>
+                    <p className="text-5xl font-bold text-gray-900 mt-4">6</p>
                 </div>
 
                 {/* Why Your Viewers Watch You */}

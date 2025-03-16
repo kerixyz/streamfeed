@@ -38,8 +38,6 @@ const DashboardView = ({ streamer }) => {
   });
   const [newcCount, setNewcCount] = useState(0);
 
-
-
   useEffect(() => {
     if (streamer) {
       fetchChatMessages();
@@ -245,6 +243,8 @@ const DashboardView = ({ streamer }) => {
               </section>
 
               <footer className="py-6 px-6 bg-white text-gray-600">
+                <p>The dashboard will be updated every week on Fridays</p>
+                <br/>
                 <p>This is an ongoing research project at the University of Washington. By clicking any of the links above, you acknowledge that your feedback may be used for ongoing research to improve the StreamFeed platform. We collect and analyze feedback to better understand how streamers engage with their audiences. Your participation is voluntary, and all data will be anonymized to ensure your privacy.</p>
                 <br/>
                 <p>For questions, comments, or feedback, please contact: kmallari[at]uw[dot]edu</p>

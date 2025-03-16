@@ -286,7 +286,7 @@ const DashboardView = ({ streamer }) => {
             </section>
 
             {/* Feedback Summary Section */}
-            <section className="w-full max-w-7xl mb-8">
+            {/* <section className="w-full max-w-7xl mb-8">
                 <h2 className="text-xl font-bold mb-6">Feedback Summary</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
@@ -308,7 +308,7 @@ const DashboardView = ({ streamer }) => {
                 ))}
                 </div>
                 
-            </section>
+            </section> */}
 
             <footer className="py-6 px-6 bg-white text-gray-600">
                 <p>This is an ongoing research project at the University of Washington. By clicking any of the links above, you acknowledge that your feedback may be used for ongoing research to improve the StreamFeed platform. We collect and analyze feedback to better understand how streamers engage with their audiences. Your participation is voluntary, and all data will be anonymized to ensure your privacy.</p>

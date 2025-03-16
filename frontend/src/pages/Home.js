@@ -83,17 +83,8 @@ const Home = () => {
       <section className="flex flex-col items-center py-10 px-6 bg-white">
         <h2 className="text-3xl font-semibold mb-4">Get Started with Getting Feedback</h2>
         
-        {/* Streamer Name Input */}
-        <input
-          type="text"
-          value={streamerName}
-          onChange={(e) => setStreamerName(e.target.value)}
-          placeholder="Enter your streamer name here"
-          className="mb-4 p-3 w-full max-w-md border rounded-md shadow-sm focus:outline-none"
-        />
-
         {/* Feedback Option Selection */}
-        <div className="flex flex-col items-start mb-6 w-full max-w-md">
+        {/* <div className="flex flex-col items-start mb-6 w-full max-w-md">
           <label className="flex items-center mb-2">
             <input
               type="checkbox"
@@ -110,14 +101,23 @@ const Home = () => {
               onChange={() => setFeedbackFromExternal(!feedbackFromExternal)}
               className="mr-2"
             />
-            {/* (Coming Soon ) */}
             Feedback from external users or potential newcomers
           </label>
-        </div>
+        </div> */}
 
         {/* Session Creation Button */}
         <div className="flex flex-col md:flex-row w-full max-w-4xl">
           <div className="flex-1 p-4 text-center border rounded-lg m-2 bg-gray-50">
+
+            {/* Streamer Name Input */}
+            <input
+            type="text"
+            value={streamerName}
+            onChange={(e) => setStreamerName(e.target.value)}
+            placeholder="Enter your streamer name here"
+            className="mb-4 p-3 w-full max-w-md border rounded-md shadow-sm focus:outline-none"
+            />
+
             <p className="mb-4">Generate a session to start collecting feedback based on your selected option(s)</p>
             <button
               onClick={() => {

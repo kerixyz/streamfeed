@@ -10,8 +10,6 @@ const Home = () => {
   const [feedbackFromViewers, setFeedbackFromViewers] = useState(false);
   const [feedbackFromExternal, setFeedbackFromExternal] = useState(false);
 
-//   console.log('API Base URL:', process.env.REACT_APP_API_BASE_URL);
-
   // Function to handle session creation
   const createSession = async () => {
     if (!feedbackFromViewers && !feedbackFromExternal) {
@@ -31,13 +29,6 @@ const Home = () => {
           feedbackFromExternal,
         }),
       });
-  
-    //   console.log({
-    //     streamerName,
-    //     feedbackFromViewers,
-    //     feedbackFromExternal,
-    //   });
-      
   
       if (response.ok) {
         const data = await response.json();
@@ -63,7 +54,7 @@ const Home = () => {
             StreamFeed helps you get detailed feedback on your streams. See through your viewers' eyes and make improvements in real-time.
           </p>
 
-          {/* Sign Up to Be a Beta Tester */}
+          {/* Sign Up to Be a Beta Tester
           <div className="mt-4">
             <p className="text-gray-700 mb-3">
               Interested in helping us improve StreamFeed? Join our beta testing program to provide valuable feedback!
@@ -76,7 +67,7 @@ const Home = () => {
             >
               Sign Up To Be a Beta Tester
             </a>
-          </div>
+          </div> */}
         </div>
 
         {/* Right Side: Placeholder for sample report */}

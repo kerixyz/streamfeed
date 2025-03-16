@@ -128,57 +128,6 @@ async function assessHybridConstructiveness(message, feedbackType, openai) {
   
     return response.choices[0].message.content;
   }
-  
-// Main function to handle user messages
-async function handleMessage(userId, message, openai, streamerName) {
-    if (!conversationState[userId]) {
-      const assignedVersion = assignVersion();
-      conversationState[userId] = {
-        version: assignedVersion,
-        messages: [],
-        awaitingConfirmation: true,
-        currentCategoryIndex: 0,
-        currentFeedbackType: 0,
-        streamerName,
-        awaitingFirstFeedback: true,
-        previousResponses: []  // Store previous responses to prevent repetition
-      };
-  
-      const introMessage = `Hi, I'm a bot to help gather feedback for your streamer. 
-                            I'll ask you some questions that we'll provide to the streamer 
-                            and researchers studying this prototype. 
-                            Reply with 'ok' to continue.`;
-      conversationState[userId].messages.push({ role: 'assistant', content: introMessage });
-      return introMessage;
-    }
-  
-    const userState = conversationState[userId];
-  
-    // Handle end of conversation
-    if (message.toLowerCase() === 'end') {
-      delete conversationState[userId];
-      return 'Thank you for using the bot! If you need more assistance, feel free to start a new conversation.';
-    }
-  
-    // Handle user confirmation
-    if (userState.awaitingConfirmation) {
-      if (message.toLowerCase() === 'ok') {
-        userState.awaitingConfirmation = false;
-        userState.awaitingFirstFeedback = true;
-      } else {
-        return "Please reply with 'ok' to continue.";
-      }
-    }
-  
-    // Route the conversation to the assigned version
-    if (userState.version === 'manual') {
-      return await handleManualVersion(userId, message, streamerName);
-    } else if (userState.version === 'adaptive') {
-      return await handleAdaptiveVersion(userId, message, openai);
-    } else {
-      return await handleHybridVersion(userId, message, openai, streamerName);
-    }
-}
 
 // Function to handle the manual version
 async function handleManualVersion(userId, message, streamerName) {
@@ -295,37 +244,6 @@ async function handleHybridVersion(userId, message, openai, streamerName) {
     }
 }
 
-// Function to handle the adaptive version
-async function handleAdaptiveVersion(userId, message, openai) {
-  const userState = conversationState[userId];
-
-  // Add the user message to the conversation history
-  userState.messages.push({ role: 'user', content: message });
-
-  // If it's the first message in adaptive mode, create the initial prompt
-  if (userState.messages.length === 1) {
-    userState.messages = createAdaptivePrompt(userState.streamerName);
-  }
-
-  // Call OpenAI's ChatGPT for response
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: userState.messages,
-      max_tokens: 200,
-      temperature: 0.7,
-    });
-
-    const botReply = response.choices[0].message.content;
-    userState.messages.push({ role: 'assistant', content: botReply });
-
-    return botReply;
-  } catch (error) {
-    console.error('Error connecting to OpenAI:', error);
-    return 'An error occurred while communicating with Evalubot. Please try again later.';
-  }
-}
-
 // Helper function to create the initial system prompt for the adaptive version
 function createAdaptivePrompt(streamerName) {
     return [
@@ -364,7 +282,91 @@ function createAdaptivePrompt(streamerName) {
       }
     ];
 }
+
+// Function to handle the adaptive version
+async function handleAdaptiveVersion(userId, message, openai) {
+    const userState = conversationState[userId];
   
+    // Add the user message to the conversation history
+    userState.messages.push({ role: 'user', content: message });
+  
+    // If it's the first message in adaptive mode, create the initial prompt
+    if (userState.messages.length === 1) {
+      userState.messages = createAdaptivePrompt(userState.streamerName);
+    }
+  
+    // Call OpenAI's ChatGPT for response
+    try {
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: userState.messages,
+        max_tokens: 200,
+        temperature: 0.7,
+      });
+  
+      const botReply = response.choices[0].message.content;
+      userState.messages.push({ role: 'assistant', content: botReply });
+  
+      return botReply;
+    } catch (error) {
+      console.error('Error connecting to OpenAI:', error);
+      return 'An error occurred while communicating with Evalubot. Please try again later.';
+    }
+  }
+  
+
+// Main function to handle user messages
+async function handleMessage(userId, message, openai, streamerName) {
+    if (!conversationState[userId]) {
+      const assignedVersion = assignVersion();
+      conversationState[userId] = {
+        version: assignedVersion,
+        messages: [],
+        awaitingConfirmation: true,
+        currentCategoryIndex: 0,
+        currentFeedbackType: 0,
+        streamerName,
+        awaitingFirstFeedback: true,
+        previousResponses: []  // Store previous responses to prevent repetition
+      };
+  
+      const introMessage = `Hi, I'm a bot to help gather feedback for your streamer. 
+                            I'll ask you some questions that we'll provide to the streamer 
+                            and researchers studying this prototype. 
+                            Reply with 'ok' to continue.`;
+      conversationState[userId].messages.push({ role: 'assistant', content: introMessage });
+      return introMessage;
+    }
+  
+    const userState = conversationState[userId];
+  
+    // Handle end of conversation
+    if (message.toLowerCase() === 'end') {
+      delete conversationState[userId];
+      return 'Thank you for using the bot! If you need more assistance, feel free to start a new conversation.';
+    }
+  
+    // Handle user confirmation
+    if (userState.awaitingConfirmation) {
+      if (message.toLowerCase() === 'ok') {
+        userState.awaitingConfirmation = false;
+        userState.awaitingFirstFeedback = true;
+      } else {
+        return "Please reply with 'ok' to continue.";
+      }
+    }
+  
+    // Route the conversation to the assigned version
+    if (userState.version === 'manual') {
+      return await handleManualVersion(userId, message, streamerName);
+    } else if (userState.version === 'adaptive') {
+      return await handleAdaptiveVersion(userId, message, openai);
+    } else {
+      return await handleHybridVersion(userId, message, openai, streamerName);
+    }
+}
+
+
 // Function to randomly assign a version
 function assignVersion() {
     // const versions = ['adaptive', 'hybrid'];

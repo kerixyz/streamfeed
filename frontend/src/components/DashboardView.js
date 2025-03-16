@@ -157,20 +157,20 @@ const DashboardView = ({ streamer }) => {
     <div className="min-h-screen flex flex-col items-start py-8 px-8 bg-gray-50">
       <h2 className="text-3xl font-semibold mb-4">Streamer Dashboard</h2>
 
-      <div className="flex mb-4">
+      {/* <div className="flex mb-4">
         <button
           className={`px-4 py-2 ${activeTab === 'viewer' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
           onClick={() => setActiveTab('viewer')}
         >
           Community
         </button>
-        {/* <button
+        <button
           className={`px-4 py-2 ${activeTab === 'external' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
           onClick={() => setActiveTab('external')}
         >
           Newcomers
-        </button> */}
-      </div>
+        </button>
+      </div> */}
 
       {activeTab === 'viewer' && (
         <section className="w-full max-w-7xl mb-6">
@@ -243,7 +243,7 @@ const DashboardView = ({ streamer }) => {
               </section>
 
               <footer className="py-6 px-6 bg-white text-gray-600">
-                <p>The dashboard will be updated every week on Fridays</p>
+                <p>Last Updated on 3/15/2025</p>
                 <br/>
                 <p>This is an ongoing research project at the University of Washington. By clicking any of the links above, you acknowledge that your feedback may be used for ongoing research to improve the StreamFeed platform. We collect and analyze feedback to better understand how streamers engage with their audiences. Your participation is voluntary, and all data will be anonymized to ensure your privacy.</p>
                 <br/>
